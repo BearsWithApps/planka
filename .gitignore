@@ -2,6 +2,13 @@ docker-compose.override.yml
 .idea
 .DS_Store
 
+# Local BearsWithApps deployment. Coolify does not see gitignored files;
+# set the same env vars on the service there.
+docker-compose.bwapps.yml
+deploy/LOCAL.md
+deploy/backup/
+deploy/branding/
+
 node_modules
 
 # Prevent another lockfile than package-lock.json (npm) from being created

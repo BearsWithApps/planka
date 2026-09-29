@@ -28,6 +28,40 @@ const envToBytes = (value) => bytes(value);
 
 const envToArray = (value) => (value ? value.split(',') : []);
 
+const envText = (value, fallback, max = 120) => {
+  if (!value) {
+    return fallback;
+  }
+
+  const cleaned = Array.from(String(value), (char) => {
+    const code = char.codePointAt(0);
+
+    return code > 31 && code !== 127 ? char : '';
+  })
+    .join('')
+    .trim();
+
+  return cleaned ? cleaned.slice(0, max) : fallback;
+};
+
+const envToHttpUrl = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+      return null;
+    }
+
+    return url.toString();
+  } catch (error) {
+    return null;
+  }
+};
+
 const baseUrl = envToArray(process.env.BASE_URL)[0];
 const parsedBasedUrl = new URL(baseUrl);
 
@@ -106,6 +140,17 @@ module.exports.custom = {
   appriseBlockedSchemas: envToArray(process.env.APPRISE_BLOCKED_SCHEMAS),
 
   gravatarBaseUrl: process.env.GRAVATAR_BASE_URL,
+
+  // Visible branding. Unset keeps the stock PLANKA name and bundled images.
+  // Logo and cover are absolute http(s) URLs (for example objects on b3).
+  productName: envText(process.env.PRODUCT_NAME, 'PLANKA', 80),
+  productDescription: envText(
+    process.env.PRODUCT_DESCRIPTION,
+    'PLANKA is the kanban-style project mastering tool for everyone',
+  ),
+  productLogoUrl: envToHttpUrl(process.env.PRODUCT_LOGO_URL),
+  productCoverUrl: envToHttpUrl(process.env.PRODUCT_COVER_URL),
+  showPromoBanner: process.env.SHOW_PROMO_BANNER !== 'false',
 
   /* Internal */
 

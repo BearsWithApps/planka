@@ -12,8 +12,20 @@ module.exports = {
   },
 
   fn() {
+    const { custom } = sails.config;
+    const branding = {
+      productName: custom.productName,
+      productDescription: custom.productDescription,
+      productLogoUrl: custom.productLogoUrl,
+      productCoverUrl: custom.productCoverUrl,
+      showPromoBanner: custom.showPromoBanner,
+    };
+
     return {
-      basePath: sails.config.custom.baseUrlPath,
+      basePath: custom.baseUrlPath,
+      productName: custom.productName,
+      productDescription: custom.productDescription,
+      brandingJson: JSON.stringify(branding).replace(/</g, '\\u003c'),
     };
   },
 };

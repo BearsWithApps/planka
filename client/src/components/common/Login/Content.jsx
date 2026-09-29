@@ -12,16 +12,16 @@ import { Form, Grid, Header, Message } from 'semantic-ui-react';
 import { useDidUpdate, usePrevious, useToggle } from '../../../lib/hooks';
 import { Input } from '../../../lib/custom-ui';
 
+import { productCoverUrl, productLogoUrl, productName } from '../../../branding';
 import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
-import actions from '../../../actions';
 import { useForm, useNestedRef } from '../../../hooks';
 import { isUsername } from '../../../utils/validator';
 import AccessTokenSteps from '../../../constants/AccessTokenSteps';
 import TermsModal from './TermsModal';
 import TotpChallengeModal from './TotpChallengeModal';
 
-import logo from '../../../assets/images/logo.png';
+import defaultLogo from '../../../assets/images/logo.png';
 
 import styles from './Content.module.scss';
 
@@ -134,13 +134,11 @@ const Content = React.memo(() => {
 
     if (!isEmail(cleanData.emailOrUsername) && !isUsername(cleanData.emailOrUsername)) {
       emailOrUsernameFieldRef.current.select();
-      dispatch(actions.authenticate.failure(new Error('Invalid email or username')));
       return;
     }
 
     if (!cleanData.password) {
       passwordFieldRef.current.focus();
-      dispatch(actions.authenticate.failure(new Error('Invalid password')));
       return;
     }
 
@@ -187,12 +185,16 @@ const Content = React.memo(() => {
           <div className={styles.login}>
             <div className={styles.form}>
               <div className={styles.logoWrapper}>
-                <img src={logo} alt="" className={styles.logo} />
+                <img
+                  src={productLogoUrl || defaultLogo}
+                  alt={productName}
+                  className={styles.logo}
+                />
               </div>
               <Header
                 as="h1"
                 textAlign="center"
-                content={bootstrap.instanceName || 'PLANKA'}
+                content={bootstrap.instanceName || productName}
                 className={styles.formTitle}
               />
               <Header
@@ -267,6 +269,7 @@ const Content = React.memo(() => {
           computer={10}
           only="computer"
           className={classNames(styles.gridItem, styles.cover)}
+          style={productCoverUrl ? { backgroundImage: `url("${productCoverUrl}")` } : undefined}
         >
           <div className={styles.coverOverlay} />
         </Grid.Column>

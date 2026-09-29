@@ -6,6 +6,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { showPromoBanner } from '../../../branding';
 import selectors from '../../../selectors';
 import Header from '../Header';
 import PromoBanner from '../PromoBanner/PromoBanner';
@@ -23,7 +24,7 @@ const Fixed = React.memo(() => {
   return (
     <div className={styles.wrapper}>
       <Header />
-      <PromoBanner />
+      {showPromoBanner && <PromoBanner />}
       <Favorites />
       {projectId === undefined && <HomeActions />}
       {projectId && <Project />}
