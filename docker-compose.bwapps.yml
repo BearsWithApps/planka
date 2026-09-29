@@ -1,0 +1,88 @@
+# BearsWithApps deployment (Coolify on newbackyard, https://tasks.bearswithapps.com).
+# Builds this fork's Dockerfile. Required Coolify env vars:
+#   BASE_URL, POSTGRES_PASSWORD, SECRET_KEY,
+#   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY (IAM user bwapps-coolify-backup-user),
+#   B3_ACCESS_KEY_ID, B3_SECRET_ACCESS_KEY (Garage key tasks-planka, bucket tasks-planka-uploads)
+# Uploads (attachments, avatars, backgrounds) go to the private Garage (b3) bucket over
+# Garage's internal docker network; Planka streams them to browsers itself.
+# Domain is assigned to the `planka` service (port 1337) in Coolify.
+services:
+  planka:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - tasks-planka-data:/app/data
+    environment:
+      - BASE_URL=${BASE_URL}
+      - DATABASE_URL=postgresql://planka:${POSTGRES_PASSWORD}@postgres/planka
+      - SECRET_KEY=${SECRET_KEY}
+      - TRUST_PROXY=true
+      - LOG_LEVEL=warn
+      # Visible name and images. Images are public objects on b3, not files in git.
+      - PRODUCT_NAME=${PRODUCT_NAME:-BearsWithApps Tasks}
+      - PRODUCT_DESCRIPTION=${PRODUCT_DESCRIPTION:-BearsWithApps Tasks is the kanban board for BearsWithApps}
+      - PRODUCT_LOGO_URL=${PRODUCT_LOGO_URL:-https://b3.bearswithapps.com/planka/logo.png}
+      - PRODUCT_COVER_URL=${PRODUCT_COVER_URL:-https://b3.bearswithapps.com/planka/login-cover.jpg}
+      - SHOW_PROMO_BANNER=${SHOW_PROMO_BANNER:-false}
+      - S3_ENDPOINT=http://garage:3900
+      - S3_REGION=garage
+      - S3_BUCKET=tasks-planka-uploads
+      - S3_FORCE_PATH_STYLE=true
+      - S3_ACCESS_KEY_ID=${B3_ACCESS_KEY_ID}
+      - S3_SECRET_ACCESS_KEY=${B3_SECRET_ACCESS_KEY}
+    networks:
+      - default
+      - garage
+    labels:
+      # Direct HTTPS route for tailnet clients (split DNS -> newbackyard, no Cloudflare hop).
+      # Uses the proxy's `cfdns` resolver (Let's Encrypt DNS-01 via Cloudflare).
+      - traefik.http.routers.tasks-tailnet.rule=Host(`tasks.bearswithapps.com`)
+      - traefik.http.routers.tasks-tailnet.entrypoints=https
+      - traefik.http.routers.tasks-tailnet.tls=true
+      - traefik.http.routers.tasks-tailnet.tls.certresolver=cfdns
+      - traefik.http.routers.tasks-tailnet.service=tasks-tailnet
+      - traefik.http.services.tasks-tailnet.loadbalancer.server.port=1337
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - tasks-planka-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=planka
+      - POSTGRES_USER=planka
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U planka -d planka"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db-backup:
+    build:
+      context: ./deploy/backup
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=us-east-2
+      - S3_BUCKET=coolify-backups-bwapps
+      - S3_PREFIX=data/coolify/backups/databases/root-team-0/service-tasks-planka-postgres-rkowo0gs0ogos4k4gwg0kcok
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  tasks-planka-data:
+  tasks-planka-db:
+
+networks:
+  garage:
+    external: true
+    name: gl92ivnh8f8ac7wj0jb0qdc8
