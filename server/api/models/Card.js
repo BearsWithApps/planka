@@ -32,6 +32,7 @@
  *         - stopwatch
  *         - commentsTotal
  *         - isClosed
+ *         - isTemplate
  *         - listChangedAt
  *         - createdAt
  *         - updatedAt
@@ -120,6 +121,16 @@
  *           default: false
  *           description: Whether the card is closed
  *           example: false
+ *         isTemplate:
+ *           type: boolean
+ *           default: false
+ *           description: Whether the card is a template of its board (kept in the archive list)
+ *           example: false
+ *         sourceTemplateCardId:
+ *           type: string
+ *           nullable: true
+ *           description: ID of the template card this card was created from (may point to a deleted template)
+ *           example: "1357158568008091270"
  *         listChangedAt:
  *           type: string
  *           format: date-time
@@ -193,6 +204,11 @@ module.exports = {
       defaultsTo: false,
       columnName: 'is_closed',
     },
+    isTemplate: {
+      type: 'boolean',
+      defaultsTo: false,
+      columnName: 'is_template',
+    },
     listChangedAt: {
       type: 'ref',
       columnName: 'list_changed_at',
@@ -224,6 +240,10 @@ module.exports = {
     prevListId: {
       model: 'List',
       columnName: 'prev_list_id',
+    },
+    sourceTemplateCardId: {
+      model: 'Card',
+      columnName: 'source_template_card_id',
     },
     coverAttachmentId: {
       model: 'Attachment',

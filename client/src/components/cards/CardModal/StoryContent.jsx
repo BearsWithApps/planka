@@ -22,6 +22,7 @@ import { BoardMembershipRoles, CardTypes, ListTypes } from '../../../constants/E
 import { CardTypeIcons } from '../../../constants/Icons';
 import { ClosableContext } from '../../../contexts';
 import NameField from './NameField';
+import TemplateInfo from './TemplateInfo';
 import Thumbnail from './Thumbnail';
 import CustomFieldGroups from './CustomFieldGroups';
 import Communication from './Communication';
@@ -73,6 +74,9 @@ const StoryContent = React.memo(() => {
   const isInArchiveList = list.type === ListTypes.ARCHIVE;
   const isInTrashList = list.type === ListTypes.TRASH;
 
+  // A template is deleted for good (it is not trashed first)
+  const isDeletedForever = isInTrashList || card.isTemplate;
+
   const {
     canEditType,
     canEditName,
@@ -100,7 +104,8 @@ const StoryContent = React.memo(() => {
       isEditor = boardMembership.role === BoardMembershipRoles.EDITOR;
     }
 
-    if (isInArchiveList || isInTrashList) {
+    // Templates live in the archive list but are edited like any other card
+    if (!card.isTemplate && (isInArchiveList || isInTrashList)) {
       return {
         canEditType: false,
         canEditName: false,
@@ -126,12 +131,12 @@ const StoryContent = React.memo(() => {
       canEditDescription: isEditor,
       canSubscribe: isMember,
       canJoin: isEditor,
-      canDuplicate: isEditor,
-      canMove: isEditor,
+      canDuplicate: isEditor && !card.isTemplate,
+      canMove: isEditor && !card.isTemplate,
       canRestore: null,
-      canArchive: isEditor,
+      canArchive: isEditor && !card.isTemplate,
       canDelete: isEditor,
-      canUseLists: isEditor,
+      canUseLists: isEditor && !card.isTemplate,
       canUseMembers: isEditor,
       canUseLabels: isEditor,
       canAddAttachment: isEditor,
@@ -192,12 +197,12 @@ const StoryContent = React.memo(() => {
   }, [dispatch]);
 
   const handleDeleteConfirm = useCallback(() => {
-    if (isInTrashList) {
+    if (isDeletedForever) {
       dispatch(entryActions.deleteCurrentCard());
     } else {
       dispatch(entryActions.moveCurrentCardToTrash());
     }
-  }, [isInTrashList, dispatch]);
+  }, [isDeletedForever, dispatch]);
 
   const handleUserSelect = useCallback(
     (userId) => {
@@ -310,6 +315,10 @@ const StoryContent = React.memo(() => {
               )}
             </div>
           </div>
+          <TemplateInfo
+            isTemplate={card.isTemplate}
+            sourceTemplateCardId={card.sourceTemplateCardId}
+          />
         </Grid.Column>
       </Grid.Row>
       <Grid.Row className={styles.modalPadding}>
@@ -637,18 +646,20 @@ const StoryContent = React.memo(() => {
                 )}
                 {canDelete && (
                   <ConfirmationPopup
-                    title={isInTrashList ? 'common.deleteCardForever' : 'common.deleteCard'}
+                    title={isDeletedForever ? 'common.deleteCardForever' : 'common.deleteCard'}
                     content={
-                      isInTrashList
+                      isDeletedForever
                         ? 'common.areYouSureYouWantToDeleteThisCardForever'
                         : 'common.areYouSureYouWantToDeleteThisCard'
                     }
-                    buttonContent={isInTrashList ? 'action.deleteCardForever' : 'action.deleteCard'}
+                    buttonContent={
+                      isDeletedForever ? 'action.deleteCardForever' : 'action.deleteCard'
+                    }
                     onConfirm={handleDeleteConfirm}
                   >
                     <Button fluid className={classNames(styles.actionButton, styles.hidable)}>
                       <Icon name="trash alternate outline" className={styles.actionIcon} />
-                      {isInTrashList
+                      {isDeletedForever
                         ? t('action.deleteForever', {
                             context: 'title',
                           })

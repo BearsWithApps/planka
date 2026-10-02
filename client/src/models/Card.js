@@ -23,6 +23,12 @@ export default class extends BaseModel {
     isDueCompleted: attr(),
     stopwatch: attr(),
     isClosed: attr(),
+    isTemplate: attr({
+      getDefault: () => false,
+    }),
+    sourceTemplateCardId: attr({
+      getDefault: () => null,
+    }),
     commentsTotal: attr({
       getDefault: () => 0,
     }),
@@ -465,6 +471,53 @@ export default class extends BaseModel {
 
         break;
       }
+      case ActionTypes.CARD_TEMPLATE_CREATE:
+      case ActionTypes.CARD_FROM_TEMPLATE_CREATE: {
+        const cardModel = Card.withId(payload.id);
+
+        if (cardModel) {
+          cardModel.duplicate(payload.localId, {
+            ...payload.data,
+            listChangedAt: new Date(),
+          });
+        }
+
+        break;
+      }
+      case ActionTypes.CARD_TEMPLATE_CREATE__SUCCESS:
+      case ActionTypes.CARD_FROM_TEMPLATE_CREATE__SUCCESS: {
+        let cardModel = Card.withId(payload.localId);
+
+        if (cardModel) {
+          cardModel.deleteWithRelated();
+        }
+
+        cardModel = Card.upsert(payload.card);
+
+        payload.cardMemberships.forEach(({ userId }) => {
+          cardModel.users.add(userId);
+        });
+
+        payload.cardLabels.forEach(({ labelId }) => {
+          cardModel.labels.add(labelId);
+        });
+
+        if (payload.comments && payload.comments.length > 0) {
+          cardModel.commentsTotal = Math.max(cardModel.commentsTotal, payload.comments.length);
+        }
+
+        break;
+      }
+      case ActionTypes.CARD_TEMPLATE_CREATE__FAILURE:
+      case ActionTypes.CARD_FROM_TEMPLATE_CREATE__FAILURE: {
+        const cardModel = Card.withId(payload.localId);
+
+        if (cardModel) {
+          cardModel.deleteWithRelated();
+        }
+
+        break;
+      }
       case ActionTypes.CARD_DUPLICATE__FAILURE: {
         const cardModel = Card.withId(payload.localId);
 
@@ -655,6 +708,8 @@ export default class extends BaseModel {
       isDueCompleted: this.isDueCompleted,
       stopwatch: this.stopwatch,
       isClosed: this.isClosed,
+      isTemplate: false,
+      sourceTemplateCardId: this.sourceTemplateCardId,
       ...data,
     });
 

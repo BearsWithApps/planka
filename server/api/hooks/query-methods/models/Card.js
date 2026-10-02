@@ -24,6 +24,15 @@ const getByBoardId = (boardId) =>
     boardId,
   });
 
+const getTemplatesByBoardId = (boardId) =>
+  defaultFind(
+    {
+      boardId,
+      isTemplate: true,
+    },
+    { sort: ['name', 'id'] },
+  );
+
 const getByListId = async (listId, { exceptIdOrIds, sort = ['position', 'id'] } = {}) => {
   const criteria = {
     listId,
@@ -67,7 +76,7 @@ const getByEndlessListId = async (
     }
 
     queryValues.push(listId);
-    query += ` WHERE card.list_id = $${queryValues.length}`;
+    query += ` WHERE card.list_id = $${queryValues.length} AND card.is_template = false`;
 
     if (before) {
       queryValues.push(before.listChangedAt);
@@ -150,7 +159,7 @@ const getByEndlessListId = async (
   }
 
   const criteria = {
-    and: [{ listId }],
+    and: [{ listId }, { isTemplate: false }],
   };
 
   if (before) {
@@ -258,6 +267,7 @@ module.exports = {
   createOne,
   getByIds,
   getByBoardId,
+  getTemplatesByBoardId,
   getByListId,
   getByEndlessListId,
   getByListIds,

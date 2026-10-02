@@ -76,6 +76,8 @@ export default class extends BaseModel {
       case ActionTypes.CARD_CREATE_HANDLE:
       case ActionTypes.CARD_TRANSFER__SUCCESS:
       case ActionTypes.CARD_DUPLICATE__SUCCESS:
+      case ActionTypes.CARD_TEMPLATE_CREATE__SUCCESS:
+      case ActionTypes.CARD_FROM_TEMPLATE_CREATE__SUCCESS:
         payload.customFieldValues.forEach((customFieldValue) => {
           CustomFieldValue.upsert(prepareCustomFieldValue(customFieldValue));
         });

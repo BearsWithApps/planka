@@ -63,6 +63,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     canCopy,
     canCut,
     canDuplicate,
+    canMakeTemplate,
     canMove,
     canRestore,
     canArchive,
@@ -81,9 +82,10 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
         canEditName: false,
         canEditDueDate: false,
         canEditStopwatch: false,
-        canCopy: isManager || isEditor,
-        canCut: isEditor,
+        canCopy: !card.isTemplate && (isManager || isEditor),
+        canCut: !card.isTemplate && isEditor,
         canDuplicate: false,
+        canMakeTemplate: false,
         canMove: false,
         canRestore: isEditor,
         canArchive: isEditor,
@@ -101,6 +103,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
       canCopy: isManager || isEditor,
       canCut: isEditor,
       canDuplicate: isEditor,
+      canMakeTemplate: isEditor,
       canMove: isEditor,
       canRestore: null,
       canArchive: isEditor,
@@ -126,6 +129,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     if (canEditName) menuItemsTotal += 1;
     if (!board.limitCardTypesToDefaultOne && canEditType) menuItemsTotal += 1;
     if (canDuplicate) menuItemsTotal += 1;
+    if (canMakeTemplate) menuItemsTotal += 1;
     if (canMove) menuItemsTotal += 1;
     if (prevList && canRestore) menuItemsTotal += 1;
 
@@ -159,6 +163,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     canCopy,
     canCut,
     canDuplicate,
+    canMakeTemplate,
     canMove,
     canRestore,
     canArchive,
@@ -193,6 +198,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
       (canCopy && !withActionBar) ||
       (canCut && !withActionBar) ||
       canDuplicate ||
+      canMakeTemplate ||
       canMove ||
       (prevList && canRestore) ||
       (list.type !== ListTypes.ARCHIVE && canArchive && !withActionBar) ||
@@ -204,6 +210,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     canCopy,
     canCut,
     canDuplicate,
+    canMakeTemplate,
     canMove,
     canRestore,
     canArchive,
@@ -237,6 +244,11 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
     onClose();
   }, [cardId, onClose, dispatch]);
 
+  const handleMakeTemplateClick = useCallback(() => {
+    dispatch(entryActions.createCardTemplate(cardId));
+    onClose();
+  }, [cardId, onClose, dispatch]);
+
   const handleRestoreClick = useCallback(() => {
     dispatch(entryActions.moveCard(cardId, card.prevListId, undefined, true));
   }, [cardId, card.prevListId, dispatch]);
@@ -247,13 +259,16 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
 
   const isInTrashList = list.type === ListTypes.TRASH;
 
+  // A template is deleted for good (it is not trashed first)
+  const isDeletedForever = isInTrashList || card.isTemplate;
+
   const handleDeleteConfirm = useCallback(() => {
-    if (isInTrashList) {
+    if (isDeletedForever) {
       dispatch(entryActions.deleteCard(cardId));
     } else {
       dispatch(entryActions.moveCardToTrash(cardId));
     }
-  }, [cardId, isInTrashList, dispatch]);
+  }, [cardId, isDeletedForever, dispatch]);
 
   const handleUserSelect = useCallback(
     (userId) => {
@@ -372,13 +387,13 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
       case StepTypes.DELETE:
         return (
           <ConfirmationStep
-            title={isInTrashList ? 'common.deleteCardForever' : 'common.deleteCard'}
+            title={isDeletedForever ? 'common.deleteCardForever' : 'common.deleteCard'}
             content={
-              isInTrashList
+              isDeletedForever
                 ? 'common.areYouSureYouWantToDeleteThisCardForever'
                 : 'common.areYouSureYouWantToDeleteThisCard'
             }
-            buttonContent={isInTrashList ? 'action.deleteCardForever' : 'action.deleteCard'}
+            buttonContent={isDeletedForever ? 'action.deleteCardForever' : 'action.deleteCard'}
             onConfirm={handleDeleteConfirm}
             onBack={handleBack}
           />
@@ -477,6 +492,14 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
               })}
             </Menu.Item>
           )}
+          {canMakeTemplate && (
+            <Menu.Item className={styles.menuItem} onClick={handleMakeTemplateClick}>
+              <Icon name="clone outline" className={styles.menuItemIcon} />
+              {t('action.makeTemplate', {
+                context: 'title',
+              })}
+            </Menu.Item>
+          )}
           {canMove && (
             <Menu.Item className={styles.menuItem} onClick={handleMoveClick}>
               <Icon name="share square outline" className={styles.menuItemIcon} />
@@ -505,7 +528,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
           {canDelete && !withActionBar && (
             <Menu.Item className={styles.menuItem} onClick={handleDeleteClick}>
               <Icon name="trash alternate outline" className={styles.menuItemIcon} />
-              {isInTrashList
+              {isDeletedForever
                 ? t('action.deleteForever', {
                     context: 'title',
                   })
@@ -564,7 +587,7 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
                   <a className={styles.actionBarItem} onClick={handleDeleteClick}>
                     <Icon fitted name="trash alternate outline" />
                     <span className={styles.actionBarItemText}>
-                      {isInTrashList
+                      {isDeletedForever
                         ? t('action.deleteForever', {
                             context: 'title',
                           })

@@ -168,6 +168,10 @@ module.exports = {
       values.name = `${inputs.record.name} (${t('copy')})`;
     }
 
+    // A plain duplicate never produces a template; the template controllers
+    // override these explicitly through `values`
+    const templateValues = { isTemplate: false };
+
     let card = await Card.qm.createOne({
       ..._.pick(inputs.record, [
         'boardId',
@@ -180,7 +184,9 @@ module.exports = {
         'isDueCompleted',
         'stopwatch',
         'isClosed',
+        'sourceTemplateCardId',
       ]),
+      ...templateValues,
       ...values,
       creatorUserId: values.creatorUser.id,
       listChangedAt: new Date().toISOString(),

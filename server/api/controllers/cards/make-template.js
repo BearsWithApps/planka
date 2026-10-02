@@ -1,55 +1,29 @@
 /*!
- * Copyright (c) 2024 PLANKA Software GmbH
+ * Copyright (c) 2026 PLANKA Software GmbH
  * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
  */
 
 /**
  * @swagger
- * /cards/{id}/duplicate:
+ * /cards/{id}/make-template:
  *   post:
- *     summary: Duplicate card
- *     description: Creates a duplicate of a card with all its contents (tasks, attachments, etc.). Requires board editor permissions.
+ *     summary: Make template from card
+ *     description: Copies a card into a new template of the same board (kept in the board archive list, hidden from lists). The original card is untouched. Requires board editor permissions.
  *     tags:
  *       - Cards
- *     operationId: duplicateCard
+ *     operationId: makeTemplateFromCard
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: ID of the card to duplicate
+ *         description: ID of the card
  *         schema:
  *           type: string
  *           example: "1357158568008091264"
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               boardId:
- *                 type: string
- *                 description: ID of the board to duplicate the card to
- *                 example: "1357158568008091265"
- *               listId:
- *                 type: string
- *                 description: ID of the list to duplicate the card to
- *                 example: "1357158568008091266"
- *               position:
- *                 type: number
- *                 minimum: 0
- *                 nullable: true
- *                 description: Position for the duplicated card within the list
- *                 example: 65536
- *               name:
- *                 type: string
- *                 maxLength: 1024
- *                 nullable: true
- *                 description: Name/title for the duplicated card
- *                 example: Implement user authentication (copy)
+
  *     responses:
  *       200:
- *         description: Card duplicated successfully
+ *         description: Template created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -133,17 +107,11 @@ const Errors = {
   CARD_NOT_FOUND: {
     cardNotFound: 'Card not found',
   },
-  BOARD_NOT_FOUND: {
-    boardNotFound: 'Board not found',
+  ARCHIVE_LIST_NOT_FOUND: {
+    archiveListNotFound: 'Archive list not found',
   },
-  LIST_NOT_FOUND: {
-    listNotFound: 'List not found',
-  },
-  LIST_MUST_BE_PRESENT: {
-    listMustBePresent: 'List must be present',
-  },
-  POSITION_MUST_BE_PRESENT: {
-    positionMustBePresent: 'Position must be present',
+  CARD_ALREADY_TEMPLATE: {
+    cardAlreadyTemplate: 'Card is already a template',
   },
 };
 
@@ -152,18 +120,6 @@ module.exports = {
     id: {
       ...idInput,
       required: true,
-    },
-    boardId: idInput,
-    listId: idInput,
-    position: {
-      type: 'number',
-      min: 0,
-      allowNull: true,
-    },
-    name: {
-      type: 'string',
-      maxLength: 1024,
-      allowNull: true,
     },
   },
 
@@ -174,16 +130,10 @@ module.exports = {
     cardNotFound: {
       responseType: 'notFound',
     },
-    boardNotFound: {
+    archiveListNotFound: {
       responseType: 'notFound',
     },
-    listNotFound: {
-      responseType: 'notFound',
-    },
-    listMustBePresent: {
-      responseType: 'unprocessableEntity',
-    },
-    positionMustBePresent: {
+    cardAlreadyTemplate: {
       responseType: 'unprocessableEntity',
     },
   },
@@ -197,7 +147,7 @@ module.exports = {
 
     const isProjectManager = await sails.helpers.users.isProjectManager(currentUser.id, project.id);
 
-    let boardMembership = await BoardMembership.qm.getOneByBoardIdAndUserId(
+    const boardMembership = await BoardMembership.qm.getOneByBoardIdAndUserId(
       board.id,
       currentUser.id,
     );
@@ -213,47 +163,14 @@ module.exports = {
     }
 
     if (card.isTemplate) {
-      throw Errors.NOT_ENOUGH_RIGHTS; // Use create-from-template instead
+      throw Errors.CARD_ALREADY_TEMPLATE;
     }
 
-    let nextProject;
-    let nextBoard;
+    const archiveList = await List.qm.getOneArchiveByBoardId(board.id);
 
-    if (!_.isUndefined(inputs.boardId)) {
-      ({ board: nextBoard, project: nextProject } = await sails.helpers.boards
-        .getPathToProjectById(inputs.boardId)
-        .intercept('pathNotFound', () => Errors.BOARD_NOT_FOUND));
-
-      boardMembership = await BoardMembership.qm.getOneByBoardIdAndUserId(
-        nextBoard.id,
-        currentUser.id,
-      );
-
-      if (!boardMembership) {
-        throw Errors.BOARD_NOT_FOUND; // Forbidden
-      }
+    if (!archiveList) {
+      throw Errors.ARCHIVE_LIST_NOT_FOUND;
     }
-
-    if (!boardMembership) {
-      throw Errors.LIST_NOT_FOUND; // Forbidden
-    }
-
-    if (boardMembership.role !== BoardMembership.Roles.EDITOR) {
-      throw Errors.NOT_ENOUGH_RIGHTS;
-    }
-
-    let nextList;
-    if (!_.isUndefined(inputs.listId)) {
-      nextList = await List.qm.getOneById(inputs.listId, {
-        boardId: (nextBoard || board).id,
-      });
-
-      if (!nextList) {
-        throw Errors.LIST_NOT_FOUND;
-      }
-    }
-
-    const values = _.pick(inputs, ['position', 'name']);
 
     const {
       card: nextCard,
@@ -265,23 +182,22 @@ module.exports = {
       customFieldGroups,
       customFields,
       customFieldValues,
-    } = await sails.helpers.cards.duplicateOne
-      .with({
-        project,
-        board,
-        list,
-        record: card,
-        values: {
-          ...values,
-          project: nextProject,
-          board: nextBoard,
-          list: nextList,
-          creatorUser: currentUser,
-        },
-        request: this.req,
-      })
-      .intercept('positionMustBeInValues', () => Errors.POSITION_MUST_BE_PRESENT)
-      .intercept('listMustBeInValues', () => Errors.LIST_MUST_BE_PRESENT);
+    } = await sails.helpers.cards.duplicateOne.with({
+      project,
+      board,
+      list,
+      record: card,
+      values: {
+        list: archiveList,
+        name: card.name,
+        isTemplate: true,
+        sourceTemplateCardId: null,
+        prevListId: null,
+        isClosed: false,
+        creatorUser: currentUser,
+      },
+      request: this.req,
+    });
 
     return {
       item: nextCard,

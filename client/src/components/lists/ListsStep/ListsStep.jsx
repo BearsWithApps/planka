@@ -15,7 +15,7 @@ import Item from './Item';
 
 import styles from './ListsStep.module.scss';
 
-const ListsStep = React.memo(({ currentId, onSelect }) => {
+const ListsStep = React.memo(({ currentId, onSelect, onBack }) => {
   const lists = useSelector(selectors.selectAvailableListsForCurrentBoard);
 
   const [t] = useTranslation();
@@ -40,7 +40,7 @@ const ListsStep = React.memo(({ currentId, onSelect }) => {
 
   return (
     <>
-      <Popup.Header>
+      <Popup.Header onBack={onBack}>
         {t('common.lists', {
           context: 'title',
         })}
@@ -73,8 +73,14 @@ const ListsStep = React.memo(({ currentId, onSelect }) => {
 });
 
 ListsStep.propTypes = {
-  currentId: PropTypes.string.isRequired,
+  currentId: PropTypes.string,
   onSelect: PropTypes.func.isRequired,
+  onBack: PropTypes.func,
+};
+
+ListsStep.defaultProps = {
+  currentId: undefined,
+  onBack: undefined,
 };
 
 export default ListsStep;

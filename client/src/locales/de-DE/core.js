@@ -87,6 +87,8 @@ export default {
       areYouSureYouWantToDeleteThisTask: 'Sind Sie sicher, dass Sie diese Aufgabe löschen möchten?',
       areYouSureYouWantToDeleteThisTaskList:
         'Sind Sie sicher, dass Sie diese Aufgaben löschen möchten?',
+      areYouSureYouWantToDeleteThisTemplate:
+        'Sind Sie sicher, dass Sie diese Vorlage löschen möchten?',
       areYouSureYouWantToDeleteThisUser:
         'Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?',
       areYouSureYouWantToDeleteThisWebhook:
@@ -122,6 +124,7 @@ export default {
       background: 'Hintergrund',
       baseCustomFields_title: 'Feldgruppe',
       baseGroup: 'Feldgruppe',
+      blankCard: 'Leere Karte',
       board: 'Arbeitsbereich',
       boardActions_title: 'Arbeitsbereich-Aktionen',
       boardNotFound_title: 'Arbeitsbereich nicht gefunden',
@@ -161,6 +164,7 @@ export default {
       copy_inline: 'Kopie',
       createBoard_title: 'Arbeitsbereich erstellen',
       createCustomFieldGroup_title: 'Feldgruppe erstellen',
+      createdFromTemplate_title: 'Aus Vorlage: {{name}}',
       createLabel_title: 'Label erstellen',
       createNewOneOrSelectExistingOne:
         'Erstellen Sie eine neue oder wählen Sie<br />eine vorhandene aus.',
@@ -178,6 +182,8 @@ export default {
       disable2fa_title: 'Zwei-Faktor-Authentifizierung deaktivieren',
       disable2faWarning:
         'Sie müssen Ihr aktuelles Passwort und einen TOTP-Code bestätigen. Bestehende Sitzungen bleiben angemeldet.',
+      deletedTemplate: 'einer gelöschten Vorlage',
+      deleteTemplate_title: 'Vorlage löschen',
       discoverPlankaPro: '✨ Mehr Features für eure Boards: PLANKA Pro entdecken',
       discoverPlankaPro_title: 'PLANKA Pro entdecken',
       dismissProBannerFor30Days: 'Für 30 Tage schließen',
@@ -188,9 +194,12 @@ export default {
       enterTotpOrRecoveryCode:
         'Geben Sie den 6-stelligen Code aus Ihrer Authenticator-App oder einen Ihrer Wiederherstellungscodes (xxxxx-xxxxx) ein.',
       expires: 'Läuft ab',
+      fromDeletedTemplate: 'Aus einer gelöschten Vorlage',
+      fromTemplate: 'Aus Vorlage',
       invalidTotpCode: 'Ungültiger TOTP- oder Wiederherstellungscode',
       lastUsed: 'Zuletzt verwendet',
       never: 'Nie',
+      noTemplates: 'Noch keine Vorlagen',
       noTrustedDevices: 'Keine vertrauenswürdigen Geräte.',
       openBoardActions: 'Arbeitsbereich-Aktionen öffnen',
       openCardActions: 'Kartenaktionen öffnen',
@@ -217,7 +226,12 @@ export default {
       scanQrCodeWithApp:
         'Scannen Sie diesen QR-Code mit einer Authenticator-App wie Google Authenticator oder Authy.',
       security_title: 'Sicherheit',
+      selectTemplate_title: 'Vorlage auswählen',
       showHiddenProjects: 'Ausgeblendete Projekte anzeigen',
+      template: 'Vorlage',
+      templateCreated: 'Vorlage erstellt',
+      templates: 'Vorlagen',
+      templates_title: 'Vorlagen',
       totpCode: 'TOTP-Code',
       totpOrRecoveryCode: 'TOTP- oder Wiederherstellungscode',
       trustedDevices_title: 'Vertrauenswürdige Browser',
@@ -517,6 +531,7 @@ export default {
       copyCard_title: 'Karte Kopieren',
       createApiKey: 'API-Schlüssel erstellen',
       createBoard: 'Arbeitsbereich erstellen',
+      createCardFromTemplate: 'Karte aus Vorlage erstellen',
       createCustomFieldGroup: 'Feldgruppe erstellen',
       createFile: 'Datei erstellen',
       createLabel: 'Label erstellen',
@@ -550,6 +565,7 @@ export default {
       deleteTask: 'Aufgabe löschen',
       deleteTaskList: 'Aufgaben löschen',
       deleteTask_title: 'Aufgabe löschen',
+      deleteTemplate: 'Vorlage löschen',
       deleteUser: 'Benutzer löschen',
       deleteUser_title: 'Benutzer löschen',
       deleteWebhook: 'Webhook löschen',
@@ -571,6 +587,7 @@ export default {
       editPermissions: 'Berechtigungen ändern',
       editRole_title: 'Rolle zuweisen',
       editStopwatch_title: 'Stoppuhr bearbeiten',
+      editTemplate: 'Vorlage bearbeiten',
       editTitle_title: 'Titel bearbeiten',
       editType_title: 'Typ ändern ',
       editUsername_title: 'Benutzername ändern',
@@ -594,6 +611,7 @@ export default {
       makeProjectPrivate_title: 'Projekt privat machen',
       makeProjectShared: 'Projekt freigeben',
       makeProjectShared_title: 'Projekt freigeben',
+      makeTemplate_title: 'Aus dieser Karte eine Vorlage machen',
       move: 'Verschieben',
       moveCard_title: 'Karte bewegen',
       moveList_title: 'Liste verschieben',

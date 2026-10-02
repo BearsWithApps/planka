@@ -11,6 +11,15 @@ Newest first. Each entry says what changed, the PR or commit, and its **upstream
 
 ## Unreleased
 
+### Card templates on boards — `candidate`
+
+Branch `claude/card-templates-board-f7c153` (no PR yet).
+
+- "Make Template From This Card" copies any card into a template owned by its board. Templates are hidden from lists and reached from a Templates icon in the board's top bar, where they can be edited, deleted or used to create a card.
+- The add-card form can start from a template. A card made from a template links back to it and gets a "Created from template" comment.
+- New endpoints `POST /api/cards/:id/make-template` and `/create-from-template`; new columns `card.is_template` and `card.source_template_card_id`.
+- Upstream: requested and unbuilt as of 2026-10-02 — [plankanban/planka#1228](https://github.com/plankanban/planka/issues/1228) ("Ability to use cards as templates", open, 15 thumbs-up) asks for Trello-style templates. Ours differs from Trello in copying rather than converting the card and in hiding templates from columns, so agree the approach on that issue before porting.
+
 ### Log in with a code emailed to you — `candidate`
 
 [BearsWithApps/planka#1](https://github.com/BearsWithApps/planka/pull/1)

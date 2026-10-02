@@ -7,6 +7,7 @@ import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Icon } from 'semantic-ui-react';
 
 import selectors from '../../../selectors';
@@ -54,6 +55,9 @@ const ProjectContent = React.memo(({ cardId }) => {
 
   const card = useSelector((state) => selectCardById(state, cardId));
   const list = useSelector((state) => selectListById(state, card.listId));
+  const sourceTemplate = useSelector(
+    (state) => !!card.sourceTemplateCardId && selectCardById(state, card.sourceTemplateCardId),
+  );
   const userIds = useSelector((state) => selectUserIdsByCardId(state, cardId));
   const labelIds = useSelector((state) => selectLabelIdsByCardId(state, cardId));
 
@@ -96,6 +100,7 @@ const ProjectContent = React.memo(({ cardId }) => {
   });
 
   const dispatch = useDispatch();
+  const [t] = useTranslation();
 
   const handleToggleStopwatchClick = useCallback(
     (event) => {
@@ -120,6 +125,7 @@ const ProjectContent = React.memo(({ cardId }) => {
     withAge ||
     attachmentsTotal > 0 ||
     notificationsTotal > 0 ||
+    card.sourceTemplateCardId ||
     listName;
 
   const isCompact =
@@ -213,6 +219,19 @@ const ProjectContent = React.memo(({ cardId }) => {
               <span className={styles.attachmentContent}>
                 <Icon name="columns" />
                 {listName}
+              </span>
+            </span>
+          )}
+          {card.sourceTemplateCardId && (
+            <span className={classNames(styles.attachment, styles.attachmentLeft)}>
+              <span
+                className={styles.attachmentContent}
+                title={t('common.createdFromTemplate', {
+                  context: 'title',
+                  name: sourceTemplate ? sourceTemplate.name : t('common.deletedTemplate'),
+                })}
+              >
+                <Icon name="clone outline" />
               </span>
             </span>
           )}

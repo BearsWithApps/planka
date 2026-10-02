@@ -118,3 +118,11 @@ npm start                    # server + client together
 
 - Every new source file starts with the PLANKA copyright header used by its neighbours.
 - Commits: `feat:` / `fix:` / `chore:` followed by a plain-English, sentence-case subject (e.g. "feat: Show how many cards a list holds").
+
+## Card templates (fork feature)
+
+- A template is an ordinary card with `is_template = true`, parked in its board's **archive list** so list-based code (positions, sort, list delete) never sees it. `Card.qm.getByEndlessListId` excludes templates; `boards/show` ships them with the board via `Card.qm.getTemplatesByBoardId`.
+- `POST /api/cards/:id/make-template` copies a card into a template; `POST /api/cards/:id/create-from-template` (`listId`, `position`, optional `name`) copies a template into a finite list on the same board, sets `source_template_card_id`, and posts a "Created from template" comment. Both reuse `helpers/cards/duplicate-one.js`.
+- A template cannot be moved, duplicated or made into another template. Deleting one is a permanent delete; cards made from it keep a dangling `sourceTemplateCardId` (no foreign key) and the client shows "From a deleted template".
+- Client: templates are filtered out in `models/List.js` / `models/Board.js`; `selectTemplateCardIdsForCurrentBoard` feeds the top-bar popup (`BoardActions/RightSide/TemplatesStep.jsx`) and the add-card picker (`cards/AddCard/SelectTemplateStep.jsx`). Many components treat archive-list cards as read-only, so they carry an explicit `!isTemplate` exception to keep templates editable.
+- The server tests need `BASE_URL`, `SECRET_KEY` and a free `sails_port`; run mocha with `--exit` if it hangs after passing.

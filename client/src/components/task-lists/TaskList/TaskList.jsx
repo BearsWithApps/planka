@@ -30,10 +30,11 @@ const TaskList = React.memo(({ id, isCompletedVisible }) => {
   const tasks = useSelector((state) => selectTasksByTaskListId(state, id));
 
   const canEdit = useSelector((state) => {
-    const { listId } = selectors.selectCurrentCard(state);
+    const { listId, isTemplate } = selectors.selectCurrentCard(state);
     const list = selectListById(state, listId);
 
-    if (isListArchiveOrTrash(list)) {
+    // Templates live in the archive list but stay editable
+    if (!isTemplate && isListArchiveOrTrash(list)) {
       return false;
     }
 

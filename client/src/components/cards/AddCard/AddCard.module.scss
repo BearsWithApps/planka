@@ -50,6 +50,35 @@
     }
   }
 
+  .selectTemplateButton {
+    flex: 0 0 auto;
+    margin-left: 0;
+  }
+
+  .templateLine {
+    align-items: center;
+    color: #6b808c;
+    display: flex;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .templateName {
+    flex: 1 1 auto;
+    margin: 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .templateClear {
+    background: transparent;
+    border: none;
+    color: #6b808c;
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+
   .selectTypeButtonIcon {
     text-decoration: none;
   }
