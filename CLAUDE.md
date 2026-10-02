@@ -39,6 +39,7 @@ Potential approach: comment on #935 proposing the emailed login code as a way to
 
 - Server tests (`npm test` in `server/`) run on an in-memory `sails-disk` datastore that cannot execute native SQL, so anything touching login or user creation must be run against Postgres: `sails_datastores__default__adapter=sails-postgresql npm test` with `DATABASE_URL` set in `server/.env`. Suites that need Postgres should skip themselves otherwise (see `server/test/integration/controllers/access-tokens/login-code.test.js`).
 - For email flows locally, point `SMTP_HOST`/`SMTP_PORT` at a Mailpit container and read the message from its API.
+- Mail that works locally but never arrives from a deployment: check `SMTP_NAME`. A container hostname has no dot, so nodemailer greets with `[127.0.0.1]`; `mail.bearswithapps.com` answers 250 and then drops the message, and Planka logs nothing (successful sends log at info, deployments run at `LOG_LEVEL=warn`). The composes set `SMTP_NAME` to the instance hostname for this reason.
 
 ## Codebase notes
 
