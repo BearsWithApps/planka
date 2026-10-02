@@ -136,6 +136,66 @@ cancelTotpChallenge.failure = (error) => ({
   },
 });
 
+const requestLoginCode = (email) => ({
+  type: ActionTypes.LOGIN_CODE_REQUEST,
+  payload: {
+    email,
+  },
+});
+
+requestLoginCode.success = (pendingToken, step) => ({
+  type: ActionTypes.LOGIN_CODE_REQUEST__SUCCESS,
+  payload: {
+    pendingToken,
+    step,
+  },
+});
+
+requestLoginCode.failure = (error) => ({
+  type: ActionTypes.LOGIN_CODE_REQUEST__FAILURE,
+  payload: {
+    error,
+  },
+});
+
+const verifyLoginCode = (code) => ({
+  type: ActionTypes.LOGIN_CODE_VERIFY,
+  payload: {
+    code,
+  },
+});
+
+verifyLoginCode.success = (accessToken) => ({
+  type: ActionTypes.LOGIN_CODE_VERIFY__SUCCESS,
+  payload: {
+    accessToken,
+  },
+});
+
+verifyLoginCode.failure = (error) => ({
+  type: ActionTypes.LOGIN_CODE_VERIFY__FAILURE,
+  payload: {
+    error,
+  },
+});
+
+const cancelLoginCode = () => ({
+  type: ActionTypes.LOGIN_CODE_CANCEL,
+  payload: {},
+});
+
+cancelLoginCode.success = () => ({
+  type: ActionTypes.LOGIN_CODE_CANCEL__SUCCESS,
+  payload: {},
+});
+
+cancelLoginCode.failure = (error) => ({
+  type: ActionTypes.LOGIN_CODE_CANCEL__FAILURE,
+  payload: {
+    error,
+  },
+});
+
 export default {
   initializeLogin,
   authenticate,
@@ -145,4 +205,7 @@ export default {
   updateTermsLanguage,
   verifyTotp,
   cancelTotpChallenge,
+  requestLoginCode,
+  verifyLoginCode,
+  cancelLoginCode,
 };

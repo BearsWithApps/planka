@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
-import { Form, Grid, Header, Message } from 'semantic-ui-react';
+import { Divider, Form, Grid, Header, Message } from 'semantic-ui-react';
 import { useDidUpdate, usePrevious, useToggle } from '../../../lib/hooks';
 import { Input } from '../../../lib/custom-ui';
 
@@ -20,6 +20,7 @@ import { isUsername } from '../../../utils/validator';
 import AccessTokenSteps from '../../../constants/AccessTokenSteps';
 import TermsModal from './TermsModal';
 import TotpChallengeModal from './TotpChallengeModal';
+import LoginCodeModal from './LoginCodeModal';
 
 import defaultLogo from '../../../assets/images/logo.png';
 
@@ -65,6 +66,16 @@ const createMessage = (error) => {
       return {
         type: 'error',
         content: 'common.activeUsersLimitReached',
+      };
+    case 'Rate limit exceeded':
+      return {
+        type: 'error',
+        content: 'common.rateLimitExceeded',
+      };
+    case 'Email login not available':
+      return {
+        type: 'error',
+        content: 'common.emailLoginNotAvailable',
       };
     case 'Failed to fetch':
       return {
@@ -144,6 +155,17 @@ const Content = React.memo(() => {
 
     dispatch(entryActions.authenticate(cleanData));
   }, [dispatch, data, emailOrUsernameFieldRef, passwordFieldRef]);
+
+  const handleLoginCodeRequest = useCallback(() => {
+    const email = data.emailOrUsername.trim();
+
+    if (!isEmail(email)) {
+      emailOrUsernameFieldRef.current.select();
+      return;
+    }
+
+    dispatch(entryActions.requestLoginCode(email));
+  }, [dispatch, data.emailOrUsername, emailOrUsernameFieldRef]);
 
   const handleMessageDismiss = useCallback(() => {
     dispatch(entryActions.clearAuthenticateError());
@@ -251,6 +273,22 @@ const Content = React.memo(() => {
                   loading={isSubmitting}
                   disabled={isSubmitting}
                 />
+                {bootstrap.isEmailLoginEnabled && (
+                  <>
+                    <Divider horizontal className={styles.orDivider}>
+                      {t('common.or')}
+                    </Divider>
+                    <Form.Button
+                      fluid
+                      type="button"
+                      icon="mail"
+                      labelPosition="right"
+                      content={t('action.emailMeLoginCode')}
+                      disabled={isSubmitting}
+                      onClick={handleLoginCodeRequest}
+                    />
+                  </>
+                )}
               </Form>
             </div>
             <div className={styles.poweredBy}>
@@ -276,6 +314,7 @@ const Content = React.memo(() => {
       </Grid>
       {step === AccessTokenSteps.ACCEPT_TERMS && <TermsModal />}
       {step === AccessTokenSteps.VERIFY_TOTP && <TotpChallengeModal />}
+      {step === AccessTokenSteps.VERIFY_LOGIN_CODE && <LoginCodeModal />}
     </div>
   );
 });

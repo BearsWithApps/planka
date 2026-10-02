@@ -20,6 +20,13 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - TRUST_PROXY=true
       - LOG_LEVEL=warn
+      # Outgoing mail for login codes and notifications; unset leaves e-mail login hidden.
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-}
+      - SMTP_SECURE=${SMTP_SECURE:-}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM=${SMTP_FROM:-}
       # Visible name and images. Images are public objects on b3, not files in git.
       - PRODUCT_NAME=${PRODUCT_NAME:-BearsWithApps Tasks}
       - PRODUCT_DESCRIPTION=${PRODUCT_DESCRIPTION:-BearsWithApps Tasks is the kanban board for BearsWithApps}

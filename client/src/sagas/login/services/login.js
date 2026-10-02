@@ -131,6 +131,74 @@ export function* cancelTotpChallenge() {
   yield put(actions.cancelTotpChallenge.success());
 }
 
+export function* requestLoginCode(email) {
+  yield put(actions.requestLoginCode(email));
+
+  let pendingToken;
+  try {
+    ({
+      item: { pendingToken },
+    } = yield call(api.requestLoginCode, { email }));
+  } catch (error) {
+    yield put(actions.requestLoginCode.failure(error));
+    return;
+  }
+
+  yield put(actions.requestLoginCode.success(pendingToken, AccessTokenSteps.VERIFY_LOGIN_CODE));
+}
+
+export function* verifyLoginCode(code) {
+  yield put(actions.verifyLoginCode(code));
+
+  const { pendingToken } = yield select(selectors.selectAuthenticateForm);
+
+  let accessToken;
+  try {
+    ({ item: accessToken } = yield call(api.verifyLoginCode, {
+      code,
+      pendingToken,
+    }));
+  } catch (error) {
+    // Terms and TOTP still apply after the code: hand those over to the
+    // regular login handling so their modals open as usual.
+    if (
+      error.step === AccessTokenSteps.ACCEPT_TERMS ||
+      error.step === AccessTokenSteps.VERIFY_TOTP
+    ) {
+      let terms;
+      if (error.step === AccessTokenSteps.ACCEPT_TERMS) {
+        ({ item: terms } = yield call(api.getTerms, i18n.resolvedLanguage));
+      }
+
+      yield put(actions.authenticate.failure(error, terms));
+      return;
+    }
+
+    yield put(actions.verifyLoginCode.failure(error));
+    return;
+  }
+
+  yield call(setAccessToken, accessToken);
+  yield put(actions.verifyLoginCode.success(accessToken));
+}
+
+export function* cancelLoginCode() {
+  const { pendingToken } = yield select(selectors.selectAuthenticateForm);
+
+  yield put(actions.cancelLoginCode());
+
+  try {
+    yield call(api.revokePendingToken, {
+      pendingToken,
+    });
+  } catch (error) {
+    yield put(actions.cancelLoginCode.failure(error));
+    return;
+  }
+
+  yield put(actions.cancelLoginCode.success());
+}
+
 export default {
   initializeLogin,
   authenticate,
@@ -140,4 +208,7 @@ export default {
   updateTermsLanguage,
   verifyTotp,
   cancelTotpChallenge,
+  requestLoginCode,
+  verifyLoginCode,
+  cancelLoginCode,
 };

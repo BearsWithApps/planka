@@ -26,6 +26,11 @@ const initialState = {
     isCancelling: false,
     error: null,
   },
+  loginCodeForm: {
+    isSubmitting: false,
+    isCancelling: false,
+    error: null,
+  },
 };
 
 // eslint-disable-next-line default-param-last
@@ -47,6 +52,9 @@ export default (state = initialState, { type, payload }) => {
     case ActionTypes.TOTP_VERIFY__SUCCESS:
     case ActionTypes.TOTP_CHALLENGE_CANCEL__SUCCESS:
     case ActionTypes.TOTP_CHALLENGE_CANCEL__FAILURE:
+    case ActionTypes.LOGIN_CODE_VERIFY__SUCCESS:
+    case ActionTypes.LOGIN_CODE_CANCEL__SUCCESS:
+    case ActionTypes.LOGIN_CODE_CANCEL__FAILURE:
       return initialState;
     case ActionTypes.AUTHENTICATE__FAILURE:
       if (payload.terms) {
@@ -55,6 +63,7 @@ export default (state = initialState, { type, payload }) => {
           data: initialState.data,
           pendingToken: payload.error.pendingToken,
           step: payload.error.step,
+          loginCodeForm: initialState.loginCodeForm,
           termsForm: {
             ...state.termsForm,
             payload: payload.terms,
@@ -70,6 +79,7 @@ export default (state = initialState, { type, payload }) => {
           pendingToken: payload.error.pendingToken,
           step: payload.error.step,
           totpForm: initialState.totpForm,
+          loginCodeForm: initialState.loginCodeForm,
         };
       }
 
@@ -102,6 +112,57 @@ export default (state = initialState, { type, payload }) => {
         pendingToken: null,
         totpForm: {
           ...state.totpForm,
+          isCancelling: true,
+        },
+      };
+    case ActionTypes.LOGIN_CODE_REQUEST:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          emailOrUsername: payload.email,
+        },
+        isSubmitting: true,
+        error: null,
+      };
+    case ActionTypes.LOGIN_CODE_REQUEST__SUCCESS:
+      return {
+        ...state,
+        isSubmitting: false,
+        pendingToken: payload.pendingToken,
+        step: payload.step,
+        loginCodeForm: initialState.loginCodeForm,
+      };
+    case ActionTypes.LOGIN_CODE_REQUEST__FAILURE:
+      return {
+        ...state,
+        isSubmitting: false,
+        error: payload.error,
+      };
+    case ActionTypes.LOGIN_CODE_VERIFY:
+      return {
+        ...state,
+        loginCodeForm: {
+          ...state.loginCodeForm,
+          isSubmitting: true,
+          error: null,
+        },
+      };
+    case ActionTypes.LOGIN_CODE_VERIFY__FAILURE:
+      return {
+        ...state,
+        loginCodeForm: {
+          ...state.loginCodeForm,
+          isSubmitting: false,
+          error: payload.error,
+        },
+      };
+    case ActionTypes.LOGIN_CODE_CANCEL:
+      return {
+        ...state,
+        pendingToken: null,
+        loginCodeForm: {
+          ...state.loginCodeForm,
           isCancelling: true,
         },
       };

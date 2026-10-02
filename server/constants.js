@@ -1,6 +1,7 @@
 const AccessTokenSteps = {
   ACCEPT_TERMS: 'accept-terms',
   VERIFY_TOTP: 'verify-totp',
+  VERIFY_LOGIN_CODE: 'verify-login-code',
 };
 
 const POSITION_GAP = 65536;

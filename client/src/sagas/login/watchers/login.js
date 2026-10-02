@@ -16,6 +16,13 @@ export default function* loginWatchers() {
     takeEvery(EntryActionTypes.AUTHENTICATE_ERROR_CLEAR, () => services.clearAuthenticateError()),
     takeEvery(EntryActionTypes.TOTP_VERIFY, ({ payload: { data } }) => services.verifyTotp(data)),
     takeEvery(EntryActionTypes.TOTP_CHALLENGE_CANCEL, () => services.cancelTotpChallenge()),
+    takeEvery(EntryActionTypes.LOGIN_CODE_REQUEST, ({ payload: { email } }) =>
+      services.requestLoginCode(email),
+    ),
+    takeEvery(EntryActionTypes.LOGIN_CODE_VERIFY, ({ payload: { code } }) =>
+      services.verifyLoginCode(code),
+    ),
+    takeEvery(EntryActionTypes.LOGIN_CODE_CANCEL, () => services.cancelLoginCode()),
     takeEvery(EntryActionTypes.TERMS_ACCEPT, ({ payload: { signature } }) =>
       services.acceptTerms(signature),
     ),

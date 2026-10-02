@@ -26,6 +26,10 @@ Given(
   },
 );
 
+Given('email login is enabled on the server', async () => {
+  await loginPage.enableEmailLogin();
+});
+
 // ---------- WHEN ----------
 
 When(
@@ -34,6 +38,10 @@ When(
     await loginPage.login(emailOrUsername, password);
   },
 );
+
+When('the user requests a login code for {string} via the web UI', async (email) => {
+  await loginPage.requestLoginCode(email);
+});
 
 When('the user logs out via the web UI', async () => {
   await homePage.logout();
@@ -47,6 +55,10 @@ Then('the user should be redirected to the home page', async () => {
 
 Then('the user should be redirected to the login page', async () => {
   await expect(page).toHaveURL(loginPage.url);
+});
+
+Then('the user should see the login code dialog', async () => {
+  await expect(page.locator(loginPage.loginCodeInputSelector)).toBeVisible();
 });
 
 Then('the user should see the message {string}', async (expectedMessage) => {

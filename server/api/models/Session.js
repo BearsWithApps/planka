@@ -35,6 +35,13 @@ module.exports = {
       defaultsTo: 0,
       columnName: 'pending_token_attempts',
     },
+    // HMAC of the emailed login code; the code itself is never stored.
+    loginCodeHash: {
+      type: 'string',
+      isNotEmptyString: true,
+      allowNull: true,
+      columnName: 'login_code_hash',
+    },
     httpOnlyToken: {
       type: 'string',
       isNotEmptyString: true,

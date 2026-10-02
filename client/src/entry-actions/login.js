@@ -48,6 +48,25 @@ const cancelTotpChallenge = () => ({
   payload: {},
 });
 
+const requestLoginCode = (email) => ({
+  type: EntryActionTypes.LOGIN_CODE_REQUEST,
+  payload: {
+    email,
+  },
+});
+
+const verifyLoginCode = (code) => ({
+  type: EntryActionTypes.LOGIN_CODE_VERIFY,
+  payload: {
+    code,
+  },
+});
+
+const cancelLoginCode = () => ({
+  type: EntryActionTypes.LOGIN_CODE_CANCEL,
+  payload: {},
+});
+
 export default {
   authenticate,
   clearAuthenticateError,
@@ -56,4 +75,7 @@ export default {
   updateTermsLanguage,
   verifyTotp,
   cancelTotpChallenge,
+  requestLoginCode,
+  verifyLoginCode,
+  cancelLoginCode,
 };
