@@ -28,6 +28,13 @@ services:
       - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD}
       - DEFAULT_ADMIN_NAME=${DEFAULT_ADMIN_NAME:-3Gen Admin}
       - DEFAULT_ADMIN_USERNAME=${DEFAULT_ADMIN_USERNAME}
+      # Outgoing mail for login codes and notifications; unset leaves e-mail login hidden.
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-}
+      - SMTP_SECURE=${SMTP_SECURE:-}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM=${SMTP_FROM:-}
       # Visible name and images (3Gen branding; logo from 3genrobotics.com).
       - PRODUCT_NAME=${PRODUCT_NAME:-3Gen Tasks}
       - PRODUCT_DESCRIPTION=${PRODUCT_DESCRIPTION:-3Gen Tasks is the kanban board for 3Gen Robotics}

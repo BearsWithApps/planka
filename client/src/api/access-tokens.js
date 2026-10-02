@@ -13,6 +13,12 @@ const createAccessToken = (data, headers) =>
 const verifyTotp = (data, headers) =>
   http.post('/access-tokens/verify-totp?withHttpOnlyToken=true', data, headers);
 
+const requestLoginCode = (data, headers) =>
+  http.post('/access-tokens/request-login-code', data, headers);
+
+const verifyLoginCode = (data, headers) =>
+  http.post('/access-tokens/verify-login-code?withHttpOnlyToken=true', data, headers);
+
 // TODO: rename?
 const acceptTerms = (data, headers) => http.post('/access-tokens/accept-terms', data, headers);
 
@@ -24,6 +30,8 @@ const deleteCurrentAccessToken = (headers) => http.delete('/access-tokens/me', u
 export default {
   createAccessToken,
   verifyTotp,
+  requestLoginCode,
+  verifyLoginCode,
   acceptTerms,
   revokePendingToken,
   deleteCurrentAccessToken,

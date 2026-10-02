@@ -14,6 +14,9 @@ module.exports = {
     user: {
       type: 'ref',
     },
+    isEmailLoginEnabled: {
+      type: 'boolean',
+    },
   },
 
   fn(inputs) {
@@ -28,6 +31,8 @@ module.exports = {
         customerPanelUrl: sails.config.custom.customerPanelUrl,
       });
     }
+
+    data.isEmailLoginEnabled = !!inputs.isEmailLoginEnabled;
 
     if (sails.config.custom.demoMode) {
       data.isDemoMode = true;

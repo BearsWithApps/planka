@@ -87,6 +87,12 @@ module.exports.custom = {
   // a pending token is valid for stop being ten minutes of free guessing.
   totpMaxAttempts: parseInt(process.env.TOTP_MAX_ATTEMPTS, 10) || 5,
 
+  // Passwordless login by emailed six-digit code. The code is single use and
+  // lives as long as the pending token it belongs to; wrong guesses are counted
+  // against that pending session like TOTP ones are.
+  loginCodeExpiresIn: parseInt(process.env.LOGIN_CODE_EXPIRES_IN, 10) || 600,
+  loginCodeMaxAttempts: parseInt(process.env.LOGIN_CODE_MAX_ATTEMPTS, 10) || 5,
+
   // Ceiling on sign-in attempts, counted per client address and per account.
   // The two attacks look different: one source working through many accounts is
   // caught by the first, many sources working on one account by the second.

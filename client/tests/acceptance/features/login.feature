@@ -16,6 +16,11 @@ Feature: Login
       | ironman         | iron123   | Invalid credentials |
       | aquaman         | aqua123   | Invalid credentials |
 
+  Scenario: User can request an emailed login code when email login is enabled
+    Given email login is enabled on the server
+    When the user requests a login code for "demo@demo.demo" via the web UI
+    Then the user should see the login code dialog
+
   Scenario: User logs out
     Given the user is logged in with email or username "demo" and password "demo"
     When the user logs out via the web UI

@@ -56,6 +56,8 @@ module.exports.policies = {
   'terms/show': true,
   'access-tokens/create': true,
   'access-tokens/verify-totp': true,
+  'access-tokens/request-login-code': true,
+  'access-tokens/verify-login-code': true,
   'access-tokens/accept-terms': true,
   'access-tokens/revoke-pending-token': true,
 };

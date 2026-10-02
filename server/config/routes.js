@@ -132,6 +132,8 @@ module.exports.routes = {
 
   'POST /api/access-tokens': 'access-tokens/create',
   'POST /api/access-tokens/verify-totp': 'access-tokens/verify-totp',
+  'POST /api/access-tokens/request-login-code': 'access-tokens/request-login-code',
+  'POST /api/access-tokens/verify-login-code': 'access-tokens/verify-login-code',
   'POST /api/access-tokens/accept-terms': 'access-tokens/accept-terms',
   'POST /api/access-tokens/revoke-pending-token': 'access-tokens/revoke-pending-token',
   'DELETE /api/access-tokens/me': 'access-tokens/delete',

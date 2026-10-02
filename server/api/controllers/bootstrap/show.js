@@ -51,8 +51,15 @@ module.exports = {
 
     const internalConfig = await InternalConfig.qm.getOneMain();
 
+    let isEmailLoginEnabled = !!sails.config.custom.smtpHost;
+
+    if (!isEmailLoginEnabled) {
+      const config = await Config.qm.getOneMain();
+      isEmailLoginEnabled = !!config.smtpHost;
+    }
+
     return {
-      item: sails.helpers.bootstrap.presentOne(internalConfig, currentUser),
+      item: sails.helpers.bootstrap.presentOne(internalConfig, currentUser, isEmailLoginEnabled),
     };
   },
 };
