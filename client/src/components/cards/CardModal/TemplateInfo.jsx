@@ -8,11 +8,11 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { Icon } from 'semantic-ui-react';
 
 import selectors from '../../../selectors';
 import Paths from '../../../constants/Paths';
 
+import { TEMPLATE_EMOJI } from '../../../constants/Icons';
 import styles from './TemplateInfo.module.scss';
 
 const TemplateInfo = React.memo(({ isTemplate, sourceTemplateCardId }) => {
@@ -28,7 +28,9 @@ const TemplateInfo = React.memo(({ isTemplate, sourceTemplateCardId }) => {
 
   return (
     <div className={styles.wrapper}>
-      <Icon name="clone outline" />
+      <span role="img" aria-hidden="true" className={styles.emoji}>
+        {TEMPLATE_EMOJI}
+      </span>
       {isTemplate && t('common.template')}
       {!isTemplate &&
         (sourceTemplate ? (

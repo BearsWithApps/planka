@@ -23,6 +23,7 @@ import UserAvatar from '../../users/UserAvatar';
 import LabelChip from '../../labels/LabelChip';
 import CustomFieldValueChip from '../../custom-field-values/CustomFieldValueChip';
 
+import { TEMPLATE_EMOJI } from '../../../constants/Icons';
 import styles from './ProjectContent.module.scss';
 
 const ProjectContent = React.memo(({ cardId }) => {
@@ -231,7 +232,9 @@ const ProjectContent = React.memo(({ cardId }) => {
                   name: sourceTemplate ? sourceTemplate.name : t('common.deletedTemplate'),
                 })}
               >
-                <Icon name="clone outline" />
+                <span role="img" aria-hidden="true">
+                  {TEMPLATE_EMOJI}
+                </span>
               </span>
             </span>
           )}

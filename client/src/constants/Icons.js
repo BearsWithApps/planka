@@ -73,3 +73,5 @@ export const CardTypeIcons = {
   [CardTypes.PROJECT]: 'list alternate outline',
   [CardTypes.STORY]: 'images outline',
 };
+
+export const TEMPLATE_EMOJI = '📋';

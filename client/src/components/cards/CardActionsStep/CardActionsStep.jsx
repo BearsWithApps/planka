@@ -23,6 +23,7 @@ import ConfirmationStep from '../../common/ConfirmationStep';
 import BoardMembershipsStep from '../../board-memberships/BoardMembershipsStep';
 import LabelsStep from '../../labels/LabelsStep';
 
+import { TEMPLATE_EMOJI } from '../../../constants/Icons';
 import styles from './CardActionsStep.module.scss';
 
 const StepTypes = {
@@ -494,7 +495,9 @@ const CardActionsStep = React.memo(({ cardId, defaultStep, onNameEdit, onClose }
           )}
           {canMakeTemplate && (
             <Menu.Item className={styles.menuItem} onClick={handleMakeTemplateClick}>
-              <Icon name="clone outline" className={styles.menuItemIcon} />
+              <span role="img" aria-hidden="true" className={styles.menuItemIcon}>
+                {TEMPLATE_EMOJI}
+              </span>
               {t('action.makeTemplate', {
                 context: 'title',
               })}

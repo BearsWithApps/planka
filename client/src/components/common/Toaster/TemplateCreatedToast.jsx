@@ -5,14 +5,17 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Icon, Message } from 'semantic-ui-react';
+import { Message } from 'semantic-ui-react';
+import { TEMPLATE_EMOJI } from '../../../constants/Icons';
 
 const TemplateCreatedToast = React.memo(() => {
   const [t] = useTranslation();
 
   return (
     <Message visible positive size="tiny">
-      <Icon name="clone outline" />
+      <span role="img" aria-hidden="true">
+        {TEMPLATE_EMOJI}
+      </span>{' '}
       {t('common.templateCreated')}
     </Message>
   );
