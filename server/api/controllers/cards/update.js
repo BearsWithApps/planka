@@ -263,6 +263,10 @@ module.exports = {
       throw Errors.NOT_ENOUGH_RIGHTS;
     }
 
+    if (card.isTemplate && (!_.isUndefined(inputs.boardId) || !_.isUndefined(inputs.listId))) {
+      throw Errors.NOT_ENOUGH_RIGHTS; // Templates stay in their board's archive list
+    }
+
     let nextProject;
     let nextBoard;
 

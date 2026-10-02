@@ -38,7 +38,8 @@ const CardModal = React.memo(() => {
   const canEdit = useSelector((state) => {
     const list = selectListById(state, card.listId);
 
-    if (isListArchiveOrTrash(list)) {
+    // Templates live in the archive list but stay editable
+    if (!card.isTemplate && isListArchiveOrTrash(list)) {
       return false;
     }
 

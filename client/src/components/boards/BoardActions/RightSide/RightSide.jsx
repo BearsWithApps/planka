@@ -15,6 +15,7 @@ import entryActions from '../../../../entry-actions';
 import { BoardContexts, BoardViews } from '../../../../constants/Enums';
 import { BoardViewIcons } from '../../../../constants/Icons';
 import ActionsStep from './ActionsStep';
+import TemplatesStep from './TemplatesStep';
 
 import styles from './RightSide.module.scss';
 
@@ -29,6 +30,7 @@ const TOOLTIP_BY_VIEW = {
 
 const RightSide = React.memo(() => {
   const board = useSelector(selectors.selectCurrentBoard);
+  const templateIds = useSelector(selectors.selectTemplateCardIdsForCurrentBoard);
 
   const dispatch = useDispatch();
   const [t] = useTranslation();
@@ -40,6 +42,7 @@ const RightSide = React.memo(() => {
     [dispatch],
   );
 
+  const TemplatesPopup = usePopup(TemplatesStep);
   const ActionsPopup = usePopup(ActionsStep);
 
   const views = [BoardViews.GRID, BoardViews.LIST];
@@ -66,6 +69,17 @@ const RightSide = React.memo(() => {
           ))}
         </div>
       </div>
+      {templateIds && templateIds.length > 0 && (
+        <div className={styles.action}>
+          <TemplatesPopup>
+            <Tooltip content={t('common.templates')}>
+              <button type="button" className={styles.button}>
+                <Icon fitted name="clone outline" />
+              </button>
+            </Tooltip>
+          </TemplatesPopup>
+        </div>
+      )}
       <div className={styles.action}>
         <ActionsPopup>
           <Tooltip content={t('common.openBoardActions')}>

@@ -39,3 +39,18 @@ Potential approach: comment on #935 proposing the emailed login code as a way to
 
 - Server tests (`npm test` in `server/`) run on an in-memory `sails-disk` datastore that cannot execute native SQL, so anything touching login or user creation must be run against Postgres: `sails_datastores__default__adapter=sails-postgresql npm test` with `DATABASE_URL` set in `server/.env`. Suites that need Postgres should skip themselves otherwise (see `server/test/integration/controllers/access-tokens/login-code.test.js`).
 - For email flows locally, point `SMTP_HOST`/`SMTP_PORT` at a Mailpit container and read the message from its API.
+
+## Codebase notes
+
+**Read [docs/codebase-notes.md](docs/codebase-notes.md) before making changes** — it covers the server request flow and permission pattern, how cards and lists load, the client action chain, UI landmarks, and conventions. Keep it up to date when you learn something that isn't obvious from the code.
+
+```bash
+npm run lint                 # server + client eslint
+npm test                     # server mocha, then client jest
+npm run server:db:migrate
+npm start                    # server + client together
+```
+
+- New source files carry the PLANKA copyright header used by neighbouring files.
+- New migrations must be dated after the latest file in `server/db/migrations/`.
+- New UI strings go in `client/src/locales/en-US/core.js` and `de-DE/core.js`.

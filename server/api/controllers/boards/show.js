@@ -209,7 +209,9 @@ module.exports = {
     const finiteLists = lists.filter((list) => sails.helpers.lists.isFinite(list));
     const finiteListIds = sails.helpers.utils.mapRecords(finiteLists);
 
-    const cards = await Card.qm.getByListIds(finiteListIds);
+    const finiteCards = await Card.qm.getByListIds(finiteListIds);
+    const templateCards = await Card.qm.getTemplatesByBoardId(board.id);
+    const cards = [...finiteCards, ...templateCards];
     const cardIds = sails.helpers.utils.mapRecords(cards);
 
     const userIds = _.union(

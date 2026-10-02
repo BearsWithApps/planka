@@ -125,6 +125,22 @@ export function* handleCardsUpdate(cards, activities) {
 }
 
 export function* createCard(listId, data, index, autoOpen) {
+  if (data.templateId) {
+    const templateCard = yield call(
+      createCardFromTemplate, // eslint-disable-line no-use-before-define
+      data.templateId,
+      listId,
+      index,
+      data.name,
+    );
+
+    if (autoOpen && templateCard) {
+      yield call(goToCard, templateCard.id);
+    }
+
+    return;
+  }
+
   const localId = yield call(createLocalId);
   const list = yield select(selectors.selectListById, listId);
 
@@ -635,6 +651,183 @@ export function* duplicateCard(id, data) {
   );
 }
 
+export function* createCardTemplate(id) {
+  const localId = yield call(createLocalId);
+  const sourceCard = yield select(selectors.selectCardById, id);
+
+  const archiveListId = yield select(selectors.selectArchiveListIdForCurrentBoard);
+
+  const currentUserMembership = yield select(
+    selectors.selectCurrentUserMembershipByBoardId,
+    sourceCard.boardId,
+  );
+
+  yield put(
+    actions.createCardTemplate(id, localId, {
+      listId: archiveListId,
+      position: null,
+      isTemplate: true,
+      isClosed: false,
+      sourceTemplateCardId: null,
+      creatorUserId: currentUserMembership.userId,
+    }),
+  );
+
+  let card;
+  let cardMemberships;
+  let cardLabels;
+  let taskLists;
+  let tasks;
+  let attachments;
+  let customFieldGroups;
+  let customFields;
+  let customFieldValues;
+
+  try {
+    ({
+      item: card,
+      included: {
+        cardMemberships,
+        cardLabels,
+        taskLists,
+        tasks,
+        attachments,
+        customFieldGroups,
+        customFields,
+        customFieldValues,
+      },
+    } = yield call(request, api.createCardTemplate, id));
+  } catch (error) {
+    yield put(actions.createCardTemplate.failure(localId, error));
+    return;
+  }
+
+  if (card.coverAttachmentId) {
+    const coverAttachment = attachments.find(
+      (attachment) => attachment.id === card.coverAttachmentId,
+    );
+
+    if (coverAttachment) {
+      yield call(_preloadImage, coverAttachment.data.thumbnailUrls.outside360);
+    }
+  }
+
+  yield put(
+    actions.createCardTemplate.success(
+      localId,
+      card,
+      cardMemberships,
+      cardLabels,
+      taskLists,
+      tasks,
+      attachments,
+      customFieldGroups,
+      customFields,
+      customFieldValues,
+    ),
+  );
+
+  yield call(toast, {
+    type: ToastTypes.TEMPLATE_CREATED,
+  });
+}
+
+export function* createCurrentCardTemplate() {
+  const { cardId } = yield select(selectors.selectPath);
+
+  yield call(createCardTemplate, cardId);
+}
+
+export function* createCardFromTemplate(id, listId, index, name) {
+  const localId = yield call(createLocalId);
+  const template = yield select(selectors.selectCardById, id);
+  const list = yield select(selectors.selectListById, listId);
+  const typeState = LIST_TYPE_STATE_BY_TYPE[list.type];
+
+  const position = yield select(selectors.selectNextCardPosition, listId, index);
+
+  const currentUserMembership = yield select(
+    selectors.selectCurrentUserMembershipByBoardId,
+    template.boardId,
+  );
+
+  const data = {
+    listId,
+    position,
+    name: name || template.name,
+  };
+
+  yield put(
+    actions.createCardFromTemplate(id, localId, {
+      ...data,
+      isTemplate: false,
+      sourceTemplateCardId: id,
+      prevListId: null,
+      isClosed: typeState === ListTypeStates.CLOSED,
+      creatorUserId: currentUserMembership.userId,
+    }),
+  );
+
+  let card;
+  let cardMemberships;
+  let cardLabels;
+  let taskLists;
+  let tasks;
+  let attachments;
+  let customFieldGroups;
+  let customFields;
+  let customFieldValues;
+  let comments;
+
+  try {
+    ({
+      item: card,
+      included: {
+        cardMemberships,
+        cardLabels,
+        taskLists,
+        tasks,
+        attachments,
+        customFieldGroups,
+        customFields,
+        customFieldValues,
+        comments,
+      },
+    } = yield call(request, api.createCardFromTemplate, id, data));
+  } catch (error) {
+    yield put(actions.createCardFromTemplate.failure(localId, error));
+    return null;
+  }
+
+  if (card.coverAttachmentId) {
+    const coverAttachment = attachments.find(
+      (attachment) => attachment.id === card.coverAttachmentId,
+    );
+
+    if (coverAttachment) {
+      yield call(_preloadImage, coverAttachment.data.thumbnailUrls.outside360);
+    }
+  }
+
+  yield put(
+    actions.createCardFromTemplate.success(
+      localId,
+      card,
+      cardMemberships,
+      cardLabels,
+      taskLists,
+      tasks,
+      attachments,
+      customFieldGroups,
+      customFields,
+      customFieldValues,
+      comments,
+    ),
+  );
+
+  return card;
+}
+
 export function* duplicateCurrentCard(data) {
   const { cardId } = yield select(selectors.selectPath);
 
@@ -790,6 +983,9 @@ export default {
   transferCurrentCard,
   duplicateCard,
   duplicateCurrentCard,
+  createCardTemplate,
+  createCurrentCardTemplate,
+  createCardFromTemplate,
   copyCard,
   cutCard,
   pasteCard,

@@ -143,6 +143,28 @@ const duplicateCard = (id, data = {}) => ({
   },
 });
 
+const createCardTemplate = (id) => ({
+  type: EntryActionTypes.CARD_TEMPLATE_CREATE,
+  payload: {
+    id,
+  },
+});
+
+const createCurrentCardTemplate = () => ({
+  type: EntryActionTypes.CURRENT_CARD_TEMPLATE_CREATE,
+  payload: {},
+});
+
+const createCardFromTemplate = (id, listId, index, name) => ({
+  type: EntryActionTypes.CARD_FROM_TEMPLATE_CREATE,
+  payload: {
+    id,
+    listId,
+    index,
+    name,
+  },
+});
+
 const duplicateCurrentCard = (data = {}) => ({
   type: EntryActionTypes.CURRENT_CARD_DUPLICATE,
   payload: {
@@ -227,6 +249,9 @@ export default {
   transferCurrentCard,
   duplicateCard,
   duplicateCurrentCard,
+  createCardTemplate,
+  createCurrentCardTemplate,
+  createCardFromTemplate,
   copyCard,
   cutCard,
   pasteCard,

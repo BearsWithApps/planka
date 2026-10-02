@@ -67,6 +67,17 @@ export default function* cardsWatchers() {
     takeEvery(EntryActionTypes.CURRENT_CARD_DUPLICATE, ({ payload: { data } }) =>
       services.duplicateCurrentCard(data),
     ),
+    takeEvery(EntryActionTypes.CARD_TEMPLATE_CREATE, ({ payload: { id } }) =>
+      services.createCardTemplate(id),
+    ),
+    takeEvery(EntryActionTypes.CURRENT_CARD_TEMPLATE_CREATE, () =>
+      services.createCurrentCardTemplate(),
+    ),
+    takeEvery(
+      EntryActionTypes.CARD_FROM_TEMPLATE_CREATE,
+      ({ payload: { id, listId, index, name } }) =>
+        services.createCardFromTemplate(id, listId, index, name),
+    ),
     takeEvery(EntryActionTypes.CARD_COPY, ({ payload: { id } }) => services.copyCard(id)),
     takeEvery(EntryActionTypes.CARD_CUT, ({ payload: { id } }) => services.cutCard(id)),
     takeEvery(EntryActionTypes.CARD_PASTE, ({ payload: { listId } }) => services.pasteCard(listId)),

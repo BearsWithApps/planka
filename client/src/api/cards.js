@@ -9,6 +9,7 @@ import socket from './socket';
 import { transformAttachment } from './attachments';
 import { transformActivity } from './activities';
 import { transformNotification } from './notifications';
+import { transformComment } from './comments';
 
 /* Transformers */
 
@@ -92,6 +93,27 @@ const duplicateCard = (id, data, headers) =>
     },
   }));
 
+const createCardTemplate = (id, headers) =>
+  socket.post(`/cards/${id}/make-template`, undefined, headers).then((body) => ({
+    ...body,
+    item: transformCard(body.item),
+    included: {
+      ...body.included,
+      attachments: body.included.attachments.map(transformAttachment),
+    },
+  }));
+
+const createCardFromTemplate = (id, data, headers) =>
+  socket.post(`/cards/${id}/create-from-template`, data, headers).then((body) => ({
+    ...body,
+    item: transformCard(body.item),
+    included: {
+      ...body.included,
+      attachments: body.included.attachments.map(transformAttachment),
+      comments: body.included.comments.map(transformComment),
+    },
+  }));
+
 const readCardNotifications = (id, headers) =>
   socket.post(`/cards/${id}/read-notifications`, undefined, headers).then((body) => ({
     ...body,
@@ -138,6 +160,8 @@ export default {
   getCard,
   updateCard,
   duplicateCard,
+  createCardTemplate,
+  createCardFromTemplate,
   readCardNotifications,
   deleteCard,
   makeHandleCardsUpdate,

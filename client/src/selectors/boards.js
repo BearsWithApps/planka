@@ -249,6 +249,30 @@ export const selectArchiveListIdForCurrentBoard = createSelector(
   },
 );
 
+export const selectTemplateCardIdsForCurrentBoard = createSelector(
+  orm,
+  (state) => selectPath(state).boardId,
+  ({ Board }, id) => {
+    if (!id) {
+      return id;
+    }
+
+    const boardModel = Board.withId(id);
+
+    if (!boardModel) {
+      return boardModel;
+    }
+
+    return boardModel.cards
+      .filter({
+        isTemplate: true,
+      })
+      .orderBy(['name', 'id.length', 'id'])
+      .toRefArray()
+      .map((card) => card.id);
+  },
+);
+
 export const selectTrashListIdForCurrentBoard = createSelector(
   orm,
   (state) => selectPath(state).boardId,
@@ -520,6 +544,7 @@ export default {
   selectCurrentUserMembershipForCurrentBoard,
   selectLabelsForCurrentBoard,
   selectArchiveListIdForCurrentBoard,
+  selectTemplateCardIdsForCurrentBoard,
   selectTrashListIdForCurrentBoard,
   selectKanbanListIdsForCurrentBoard,
   selectAvailableListsForCurrentBoard,

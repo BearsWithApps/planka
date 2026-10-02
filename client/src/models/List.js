@@ -285,7 +285,8 @@ export default class extends BaseModel {
           ['desc', 'desc', 'desc'],
         ];
 
-    return this.cards.orderBy(...orderByArgs);
+    // Templates live in the archive list but are shown only through the board's Templates menu
+    return this.cards.filter((card) => !card.isTemplate).orderBy(...orderByArgs);
   }
 
   getCardsModelArray() {

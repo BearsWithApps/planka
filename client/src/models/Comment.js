@@ -48,6 +48,12 @@ export default class extends BaseModel {
         Comment.upsert(payload.comment);
 
         break;
+      case ActionTypes.CARD_FROM_TEMPLATE_CREATE__SUCCESS:
+        payload.comments.forEach((comment) => {
+          Comment.upsert(comment);
+        });
+
+        break;
       case ActionTypes.COMMENT_CREATE__SUCCESS:
         Comment.withId(payload.localId).delete();
         Comment.upsert(payload.comment);

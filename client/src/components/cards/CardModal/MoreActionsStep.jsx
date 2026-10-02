@@ -31,24 +31,27 @@ const MoreActionsStep = React.memo(({ onClose }) => {
   const card = useSelector(selectors.selectCurrentCard);
   const board = useSelector(selectors.selectCurrentBoard);
 
-  const { canEditType, canDuplicate, canMove } = useSelector((state) => {
+  const { canEditType, canDuplicate, canMakeTemplate, canMove } = useSelector((state) => {
     const list = selectListById(state, card.listId);
 
     const boardMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
     const isEditor = !!boardMembership && boardMembership.role === BoardMembershipRoles.EDITOR;
 
-    if (isListArchiveOrTrash(list)) {
+    // Templates live in the archive list but are edited like any other card
+    if (!card.isTemplate && isListArchiveOrTrash(list)) {
       return {
         canEditType: false,
         canDuplicate: false,
+        canMakeTemplate: false,
         canMove: isEditor,
       };
     }
 
     return {
       canEditType: isEditor,
-      canDuplicate: isEditor,
-      canMove: isEditor,
+      canDuplicate: isEditor && !card.isTemplate,
+      canMakeTemplate: isEditor && !card.isTemplate,
+      canMove: isEditor && !card.isTemplate,
     };
   }, shallowEqual);
 
@@ -69,6 +72,10 @@ const MoreActionsStep = React.memo(({ onClose }) => {
 
   const handleDuplicateClick = useCallback(() => {
     dispatch(entryActions.duplicateCurrentCard());
+  }, [dispatch]);
+
+  const handleMakeTemplateClick = useCallback(() => {
+    dispatch(entryActions.createCurrentCardTemplate());
   }, [dispatch]);
 
   const handleEditTypeClick = useCallback(() => {
@@ -120,6 +127,14 @@ const MoreActionsStep = React.memo(({ onClose }) => {
             <Menu.Item className={styles.menuItem} onClick={handleDuplicateClick}>
               <Icon name="copy outline" className={styles.menuItemIcon} />
               {t('action.duplicateCard', {
+                context: 'title',
+              })}
+            </Menu.Item>
+          )}
+          {canMakeTemplate && (
+            <Menu.Item className={styles.menuItem} onClick={handleMakeTemplateClick}>
+              <Icon name="clone outline" className={styles.menuItemIcon} />
+              {t('action.makeTemplate', {
                 context: 'title',
               })}
             </Menu.Item>

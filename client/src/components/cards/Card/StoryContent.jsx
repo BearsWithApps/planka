@@ -7,6 +7,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { shallowEqual, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Icon } from 'semantic-ui-react';
 
 import selectors from '../../../selectors';
@@ -42,6 +43,11 @@ const StoryContent = React.memo(({ cardId }) => {
 
   const card = useSelector((state) => selectCardById(state, cardId));
   const list = useSelector((state) => selectListById(state, card.listId));
+  const sourceTemplate = useSelector(
+    (state) => !!card.sourceTemplateCardId && selectCardById(state, card.sourceTemplateCardId),
+  );
+
+  const [t] = useTranslation();
   const labelIds = useSelector((state) => selectLabelIdsByCardId(state, cardId));
   const attachmentsTotal = useSelector((state) => selectAttachmentsTotalByCardId(state, cardId));
 
@@ -105,7 +111,11 @@ const StoryContent = React.memo(({ cardId }) => {
           {card.name}
         </div>
         {card.description && <div className={styles.descriptionText}>{descriptionText}</div>}
-        {(withAge || attachmentsTotal > 0 || notificationsTotal > 0 || listName) && (
+        {(withAge ||
+          attachmentsTotal > 0 ||
+          notificationsTotal > 0 ||
+          card.sourceTemplateCardId ||
+          listName) && (
           <span className={styles.attachments}>
             {notificationsTotal > 0 && (
               <span
@@ -123,6 +133,19 @@ const StoryContent = React.memo(({ cardId }) => {
                 <span className={styles.attachmentContent}>
                   <Icon name="columns" />
                   {listName}
+                </span>
+              </span>
+            )}
+            {card.sourceTemplateCardId && (
+              <span className={classNames(styles.attachment, styles.attachmentLeft)}>
+                <span
+                  className={styles.attachmentContent}
+                  title={t('common.createdFromTemplate', {
+                    context: 'title',
+                    name: sourceTemplate ? sourceTemplate.name : t('common.deletedTemplate'),
+                  })}
+                >
+                  <Icon name="clone outline" />
                 </span>
               </span>
             )}

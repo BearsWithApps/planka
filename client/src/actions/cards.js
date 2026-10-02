@@ -270,6 +270,96 @@ duplicateCard.failure = (localId, error) => ({
   },
 });
 
+const createCardTemplate = (id, localId, data) => ({
+  type: ActionTypes.CARD_TEMPLATE_CREATE,
+  payload: {
+    id,
+    localId,
+    data,
+  },
+});
+
+createCardTemplate.success = (
+  localId,
+  card,
+  cardMemberships,
+  cardLabels,
+  taskLists,
+  tasks,
+  attachments,
+  customFieldGroups,
+  customFields,
+  customFieldValues,
+) => ({
+  type: ActionTypes.CARD_TEMPLATE_CREATE__SUCCESS,
+  payload: {
+    localId,
+    card,
+    cardMemberships,
+    cardLabels,
+    taskLists,
+    tasks,
+    attachments,
+    customFieldGroups,
+    customFields,
+    customFieldValues,
+  },
+});
+
+createCardTemplate.failure = (localId, error) => ({
+  type: ActionTypes.CARD_TEMPLATE_CREATE__FAILURE,
+  payload: {
+    localId,
+    error,
+  },
+});
+
+const createCardFromTemplate = (id, localId, data) => ({
+  type: ActionTypes.CARD_FROM_TEMPLATE_CREATE,
+  payload: {
+    id,
+    localId,
+    data,
+  },
+});
+
+createCardFromTemplate.success = (
+  localId,
+  card,
+  cardMemberships,
+  cardLabels,
+  taskLists,
+  tasks,
+  attachments,
+  customFieldGroups,
+  customFields,
+  customFieldValues,
+  comments,
+) => ({
+  type: ActionTypes.CARD_FROM_TEMPLATE_CREATE__SUCCESS,
+  payload: {
+    localId,
+    card,
+    cardMemberships,
+    cardLabels,
+    taskLists,
+    tasks,
+    attachments,
+    customFieldGroups,
+    customFields,
+    customFieldValues,
+    comments,
+  },
+});
+
+createCardFromTemplate.failure = (localId, error) => ({
+  type: ActionTypes.CARD_FROM_TEMPLATE_CREATE__FAILURE,
+  payload: {
+    localId,
+    error,
+  },
+});
+
 const copyCard = (id) => ({
   type: ActionTypes.CARD_COPY,
   payload: {
@@ -327,6 +417,8 @@ export default {
   handleCardUpdate,
   transferCard,
   duplicateCard,
+  createCardTemplate,
+  createCardFromTemplate,
   copyCard,
   cutCard,
   pasteCard,
