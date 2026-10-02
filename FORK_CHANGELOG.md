@@ -34,6 +34,8 @@ Branch `claude/card-templates-board-f7c153` (no PR yet).
 
 Part of [BearsWithApps/planka#1](https://github.com/BearsWithApps/planka/pull/1). `docker-compose.bwapps.yml` and `docker-compose.3gen.yml` pass `SMTP_*` to the container; values live in Coolify.
 
+Follow-up: both composes also set `SMTP_NAME` (the SMTP HELO name) to the instance hostname. Without it, mail sent from the container was accepted by `mail.bearswithapps.com` with a 250 and never delivered, with nothing logged (found 2026-10-02).
+
 ## 2026-10-01
 
 ### 3Gen Robotics deployment — `fork-only`

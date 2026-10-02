@@ -27,6 +27,9 @@ services:
       - SMTP_USER=${SMTP_USER:-}
       - SMTP_PASSWORD=${SMTP_PASSWORD:-}
       - SMTP_FROM=${SMTP_FROM:-}
+      # HELO name. Without it nodemailer says [127.0.0.1] from inside the container,
+      # and the mail host accepts the message and then silently drops it.
+      - SMTP_NAME=${SMTP_NAME:-tasks.bearswithapps.com}
       # Visible name and images. Images are public objects on b3, not files in git.
       - PRODUCT_NAME=${PRODUCT_NAME:-BearsWithApps Tasks}
       - PRODUCT_DESCRIPTION=${PRODUCT_DESCRIPTION:-BearsWithApps Tasks is the kanban board for BearsWithApps}
