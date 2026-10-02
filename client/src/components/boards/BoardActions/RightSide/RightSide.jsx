@@ -13,7 +13,7 @@ import { usePopup } from '../../../../lib/popup';
 import selectors from '../../../../selectors';
 import entryActions from '../../../../entry-actions';
 import { BoardContexts, BoardViews } from '../../../../constants/Enums';
-import { BoardViewIcons } from '../../../../constants/Icons';
+import { BoardViewIcons, TEMPLATE_EMOJI } from '../../../../constants/Icons';
 import ActionsStep from './ActionsStep';
 import TemplatesStep from './TemplatesStep';
 
@@ -74,7 +74,9 @@ const RightSide = React.memo(() => {
           <TemplatesPopup>
             <Tooltip content={t('common.templates')}>
               <button type="button" className={styles.button}>
-                <Icon fitted name="clone outline" />
+                <span role="img" aria-hidden="true" className={styles.templateEmoji}>
+                  {TEMPLATE_EMOJI}
+                </span>
               </button>
             </Tooltip>
           </TemplatesPopup>

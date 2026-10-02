@@ -17,7 +17,7 @@ import { usePopup } from '../../../lib/popup';
 import selectors from '../../../selectors';
 import { useClosable, useForm, useNestedRef } from '../../../hooks';
 import { isComposing, isModifierKeyPressed } from '../../../utils/event-helpers';
-import { CardTypeIcons } from '../../../constants/Icons';
+import { CardTypeIcons, TEMPLATE_EMOJI } from '../../../constants/Icons';
 import SelectCardTypeStep from '../SelectCardTypeStep';
 import SelectTemplateStep from './SelectTemplateStep';
 
@@ -212,7 +212,9 @@ const AddCard = React.memo(({ isOpened, className, onCreate, onClose }) => {
       </div>
       {selectedTemplate && (
         <div className={styles.templateLine}>
-          <Icon name="clone outline" />
+          <span role="img" aria-hidden="true" className={styles.templateEmoji}>
+            {TEMPLATE_EMOJI}
+          </span>
           <span className={styles.templateName}>{selectedTemplate.name}</span>
           <button type="button" className={styles.templateClear} onClick={handleTemplateClear}>
             <Icon fitted name="close" />
@@ -246,13 +248,16 @@ const AddCard = React.memo(({ isOpened, className, onCreate, onClose }) => {
                 {...clickAwayProps} // eslint-disable-line react/jsx-props-no-spreading
                 ref={handleSelectTemplateButtonRef}
                 type="button"
-                icon="clone outline"
                 className={classNames(
                   styles.button,
                   styles.selectTypeButton,
                   styles.selectTemplateButton,
                 )}
-              />
+              >
+                <span role="img" aria-hidden="true" className={styles.templateEmoji}>
+                  {TEMPLATE_EMOJI}
+                </span>
+              </Button>
             </Tooltip>
           </SelectTemplatePopup>
         )}

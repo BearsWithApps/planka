@@ -17,6 +17,7 @@ import TimeAgo from '../../common/TimeAgo';
 import LabelChip from '../../labels/LabelChip';
 import CustomFieldValueChip from '../../custom-field-values/CustomFieldValueChip';
 
+import { TEMPLATE_EMOJI } from '../../../constants/Icons';
 import styles from './StoryContent.module.scss';
 
 const StoryContent = React.memo(({ cardId }) => {
@@ -145,7 +146,9 @@ const StoryContent = React.memo(({ cardId }) => {
                     name: sourceTemplate ? sourceTemplate.name : t('common.deletedTemplate'),
                   })}
                 >
-                  <Icon name="clone outline" />
+                  <span role="img" aria-hidden="true">
+                    {TEMPLATE_EMOJI}
+                  </span>
                 </span>
               </span>
             )}

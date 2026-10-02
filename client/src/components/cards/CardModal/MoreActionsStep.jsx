@@ -18,6 +18,7 @@ import { BoardMembershipRoles } from '../../../constants/Enums';
 import SelectCardTypeStep from '../SelectCardTypeStep';
 import MoveCardStep from '../MoveCardStep';
 
+import { TEMPLATE_EMOJI } from '../../../constants/Icons';
 import styles from './MoreActionsStep.module.scss';
 
 const StepTypes = {
@@ -133,7 +134,9 @@ const MoreActionsStep = React.memo(({ onClose }) => {
           )}
           {canMakeTemplate && (
             <Menu.Item className={styles.menuItem} onClick={handleMakeTemplateClick}>
-              <Icon name="clone outline" className={styles.menuItemIcon} />
+              <span role="img" aria-hidden="true" className={styles.menuItemIcon}>
+                {TEMPLATE_EMOJI}
+              </span>
               {t('action.makeTemplate', {
                 context: 'title',
               })}
