@@ -31,8 +31,8 @@ services:
       # Visible name and images (3Gen branding; logo from 3genrobotics.com).
       - PRODUCT_NAME=${PRODUCT_NAME:-3Gen Tasks}
       - PRODUCT_DESCRIPTION=${PRODUCT_DESCRIPTION:-3Gen Tasks is the kanban board for 3Gen Robotics}
-      - PRODUCT_LOGO_URL=${PRODUCT_LOGO_URL:-https://b3.bearswithapps.com/3gen/branding/logo.png}
-      - PRODUCT_COVER_URL=${PRODUCT_COVER_URL:-https://b3.bearswithapps.com/3gen/branding/login-cover.jpg}
+      - PRODUCT_LOGO_URL=${PRODUCT_LOGO_URL:-https://3genfiles.bearswithapps.com/branding/logo.png}
+      - PRODUCT_COVER_URL=${PRODUCT_COVER_URL:-https://3genfiles.bearswithapps.com/branding/login-cover.jpg}
       - SHOW_PROMO_BANNER=${SHOW_PROMO_BANNER:-false}
       - S3_ENDPOINT=http://garage:3900
       - S3_REGION=garage
