@@ -22,5 +22,5 @@ export default function* loginSaga() {
   ]);
 
   yield cancel(watcherTasks);
-  yield call(services.goToRoot);
+  yield call(services.goToRedirectOrRoot);
 }
