@@ -25,12 +25,6 @@ export function* goToRoot() {
   yield call(goTo, Paths.ROOT);
 }
 
-export function* goToRedirectOrRoot() {
-  const redirect = getLoginRedirect();
-
-  yield call(goTo, redirect || Paths.ROOT);
-}
-
 export function* goToProject(projectId) {
   yield call(goTo, Paths.PROJECTS.replace(':id', projectId));
 }
@@ -59,10 +53,20 @@ export function* handleLocationChange() {
   }
 
   switch (pathsMatch.pattern.path) {
-    case Paths.LOGIN:
-      yield call(goToRedirectOrRoot);
+    case Paths.LOGIN: {
+      const redirect = getLoginRedirect();
+
+      if (redirect) {
+        // The push starts a fresh handler for the target; this one still holds
+        // the stale /login match and would dispatch it over the real one.
+        yield call(goTo, redirect);
+        return;
+      }
+
+      yield call(goToRoot);
 
       break;
+    }
     default:
   }
 
@@ -264,7 +268,6 @@ export function* handleLocationChange() {
 export default {
   goTo,
   goToRoot,
-  goToRedirectOrRoot,
   goToProject,
   goToBoard,
   goToCard,
