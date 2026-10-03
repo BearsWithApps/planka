@@ -12,6 +12,7 @@ import selectors from '../../../selectors';
 import actions from '../../../actions';
 import api from '../../../api';
 import { getAccessToken } from '../../../utils/access-token-storage';
+import getLoginRedirect from '../../../utils/login-redirect';
 import mergeRecords from '../../../utils/merge-records';
 import ActionTypes from '../../../constants/ActionTypes';
 import Paths from '../../../constants/Paths';
@@ -22,6 +23,12 @@ export function* goTo(pathname) {
 
 export function* goToRoot() {
   yield call(goTo, Paths.ROOT);
+}
+
+export function* goToRedirectOrRoot() {
+  const redirect = getLoginRedirect();
+
+  yield call(goTo, redirect || Paths.ROOT);
 }
 
 export function* goToProject(projectId) {
@@ -53,7 +60,7 @@ export function* handleLocationChange() {
 
   switch (pathsMatch.pattern.path) {
     case Paths.LOGIN:
-      yield call(goToRoot);
+      yield call(goToRedirectOrRoot);
 
       break;
     default:
@@ -257,6 +264,7 @@ export function* handleLocationChange() {
 export default {
   goTo,
   goToRoot,
+  goToRedirectOrRoot,
   goToProject,
   goToBoard,
   goToCard,
