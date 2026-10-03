@@ -8,6 +8,7 @@ import { push } from '../../../lib/redux-router';
 
 import selectors from '../../../selectors';
 import ActionTypes from '../../../constants/ActionTypes';
+import Config from '../../../constants/Config';
 import Paths from '../../../constants/Paths';
 
 export function* goTo(pathname) {
@@ -15,11 +16,35 @@ export function* goTo(pathname) {
 }
 
 export function* goToLogin() {
-  yield call(goTo, Paths.LOGIN);
+  const { pathname, search } = window.location;
+  const target = `${pathname}${search}`;
+
+  if (pathname === Paths.ROOT || pathname === Paths.LOGIN) {
+    yield call(goTo, Paths.LOGIN);
+    return;
+  }
+
+  yield call(goTo, `${Paths.LOGIN}?redirect=${encodeURIComponent(target)}`);
 }
 
 export function* goToRoot() {
   yield call(goTo, Paths.ROOT);
+}
+
+export function* goToRedirectOrRoot() {
+  const redirect = new URLSearchParams(window.location.search).get('redirect');
+
+  if (
+    redirect &&
+    redirect.startsWith(`${Config.BASE_PATH}/`) &&
+    !redirect.startsWith('//') &&
+    !redirect.startsWith(Paths.LOGIN)
+  ) {
+    yield call(goTo, redirect);
+    return;
+  }
+
+  yield call(goToRoot);
 }
 
 export function* handleLocationChange() {
@@ -55,5 +80,6 @@ export default {
   goTo,
   goToLogin,
   goToRoot,
+  goToRedirectOrRoot,
   handleLocationChange,
 };
