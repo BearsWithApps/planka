@@ -8,7 +8,7 @@ import { push } from '../../../lib/redux-router';
 
 import selectors from '../../../selectors';
 import ActionTypes from '../../../constants/ActionTypes';
-import Config from '../../../constants/Config';
+import getLoginRedirect from '../../../utils/login-redirect';
 import Paths from '../../../constants/Paths';
 
 export function* goTo(pathname) {
@@ -32,19 +32,7 @@ export function* goToRoot() {
 }
 
 export function* goToRedirectOrRoot() {
-  const redirect = new URLSearchParams(window.location.search).get('redirect');
-
-  if (
-    redirect &&
-    redirect.startsWith(`${Config.BASE_PATH}/`) &&
-    !redirect.startsWith('//') &&
-    !redirect.startsWith(Paths.LOGIN)
-  ) {
-    yield call(goTo, redirect);
-    return;
-  }
-
-  yield call(goToRoot);
+  yield call(goTo, getLoginRedirect() || Paths.ROOT);
 }
 
 export function* handleLocationChange() {
