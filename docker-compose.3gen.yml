@@ -53,6 +53,12 @@ services:
     networks:
       - default
       - garage
+    labels:
+      # planka sits on three networks (this app's, `default` and the Garage one) but coolify-proxy
+      # is only attached to this app's own network (named after the Coolify app uuid) and the
+      # Garage one. Without this label Traefik may pick the `default` IP, which it cannot reach,
+      # and every request hangs until a 504 after 30 s (the 2026-10-06 tasks.3genrobotics.com outage).
+      - traefik.docker.network=p139mz0py2r7gxh4ty90ngaf
     depends_on:
       postgres:
         condition: service_healthy
