@@ -1,0 +1,23 @@
+:global(#app) {
+  .wrapper {
+    background: none;
+    border: 0;
+    bottom: 6px;
+    color: #6b808c;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 10px;
+    line-height: 1;
+    opacity: 0.35;
+    padding: 2px 4px;
+    position: fixed;
+    right: 8px;
+    transition: opacity 0.2s ease;
+    user-select: none;
+    z-index: 1000;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+}

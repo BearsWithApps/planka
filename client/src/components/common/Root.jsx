@@ -16,6 +16,7 @@ import Paths from '../../constants/Paths';
 import Login from './Login';
 import Core from './Core';
 import GhostError from './GhostError';
+import VersionLabel from './VersionLabel';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'photoswipe/dist/photoswipe.css';
@@ -38,6 +39,7 @@ function Root({ store, history }) {
               <Route path={Paths.CARDS} element={<Core />} />
               <Route path="*" element={<GhostError />} />
             </Routes>
+            <VersionLabel />
           </ToasterProvider>
         </ThemeProvider>
       </ReduxRouter>

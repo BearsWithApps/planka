@@ -15,6 +15,9 @@ RUN  npm install \
 # Stage 2: Client build
 FROM node:24 AS client
 
+ARG SOURCE_COMMIT=unknown
+ENV SOURCE_COMMIT=$SOURCE_COMMIT
+
 WORKDIR /app
 
 COPY client .
