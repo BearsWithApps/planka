@@ -15,4 +15,33 @@
       scrollbar-color: rgba(0, 0, 0, 0.32) rgba(0, 0, 0, 0.08);
     }
   }
+
+  .feed {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    width: 360px;
+  }
+
+  .layout {
+    align-items: flex-start;
+    display: flex;
+    gap: 24px;
+  }
+
+  .projects {
+    flex: 1;
+    min-width: 0;
+  }
+
+  @media (max-width: 1100px) {
+    .feed {
+      position: static;
+      width: 100%;
+    }
+
+    .layout {
+      flex-direction: column;
+    }
+  }
 }

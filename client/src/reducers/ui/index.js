@@ -8,6 +8,7 @@ import { combineReducers } from 'redux';
 import authenticateForm from './authenticate-form';
 import userCreateForm from './user-create-form';
 import projectCreateForm from './project-create-form';
+import recentActivities from './recent-activities';
 import smtpTestState from './smtp-test-state';
 import userTrustedDevicesState from './user-trusted-devices-state';
 
@@ -15,6 +16,7 @@ export default combineReducers({
   authenticateForm,
   userCreateForm,
   projectCreateForm,
+  recentActivities,
   smtpTestState,
   userTrustedDevicesState,
 });

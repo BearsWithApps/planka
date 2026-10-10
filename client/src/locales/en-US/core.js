@@ -124,6 +124,23 @@ export default {
       canOnlyViewBoard: 'Can only view the board.',
       cardActions_title: 'Card Actions',
       cardNotFound_title: 'Card Not Found',
+      cardOnBoardUserAddedCard:
+        '<0>{{card}}</0> on {{board}} — <4>{{user}}</4> added this card to {{list}}',
+      cardOnBoardUserAddedUser:
+        '<0>{{card}}</0> on {{board}} — <4>{{actorUser}}</4> added {{addedUser}} to this card',
+      cardOnBoardUserCommented:
+        '<0>{{card}}</0> on {{board}} — <4>{{user}}</4> added a comment: «{{comment}}»',
+      cardOnBoardUserCompletedTask:
+        '<0>{{card}}</0> on {{board}} — <4>{{user}}</4> completed {{task}} on this card',
+      cardOnBoardUserJoined: '<0>{{card}}</0> on {{board}} — <4>{{user}}</4> joined this card',
+      cardOnBoardUserLeft: '<0>{{card}}</0> on {{board}} — <4>{{user}}</4> left this card',
+      cardOnBoardUserMarkedTaskIncomplete:
+        '<0>{{card}}</0> on {{board}} — <4>{{user}}</4> marked {{task}} incomplete on this card',
+      cardOnBoardUserMovedCard:
+        '<0>{{card}}</0> on {{board}} — <4>{{user}}</4> moved this card from {{fromList}} to {{toList}}',
+      cardOnBoardUserRemovedUser:
+        '<0>{{card}}</0> on {{board}} — <4>{{actorUser}}</4> removed {{removedUser}} from this card',
+      cardOnBoardUserUpdated: '<0>{{card}}</0> on {{board}} — <4>{{user}}</4> updated this card',
       cardsOnThisListAreAvailableToAllBoardMembers:
         'Cards on this list are available to all board members.',
       cardsOnThisListAreCompleteAndReadyToBeArchived:
@@ -334,6 +351,7 @@ export default {
       noLists: 'No lists',
       noMember: 'No member',
       noProjects: 'No projects',
+      noRecentChanges: 'No recent changes.',
       noSavedFilters: 'No saved filters',
       noUnreadNotifications: 'No unread notifications.',
       notifications: 'Notifications',
@@ -366,6 +384,7 @@ export default {
       project: 'Project',
       projectNotFound_title: 'Project Not Found',
       projectOwner: 'Project owner',
+      recentChanges_title: 'Recent Changes',
       referenceDataAndKnowledgeStorage: 'Reference data and knowledge storage.',
       regenerateApiKey_title: 'Regenerate API Key',
       rejectUnauthorizedTlsCertificates: 'Reject unauthorized TLS certificates',

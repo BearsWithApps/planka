@@ -10,6 +10,7 @@ import selectors from '../../../selectors';
 import { HomeViews } from '../../../constants/Enums';
 import GridProjectsView from './GridProjectsView';
 import GroupedProjectsView from './GroupedProjectsView';
+import RecentChanges from './RecentChanges';
 
 import styles from './Home.module.scss';
 
@@ -31,7 +32,12 @@ const Home = React.memo(() => {
 
   return (
     <div className={styles.wrapper}>
-      <View />
+      <div className={styles.layout}>
+        <div className={styles.projects}>
+          <View />
+        </div>
+        <RecentChanges className={styles.feed} />
+      </div>
     </div>
   );
 });

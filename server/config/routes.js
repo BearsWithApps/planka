@@ -242,6 +242,7 @@ module.exports.routes = {
   'PATCH /api/comments/:id': 'comments/update',
   'DELETE /api/comments/:id': 'comments/delete',
 
+  'GET /api/actions/recent': 'actions/index-recent',
   'GET /api/boards/:boardId/actions': 'actions/index-in-board',
   'GET /api/cards/:cardId/actions': 'actions/index-in-card',
 

@@ -10,6 +10,27 @@ import selectors from '../../../selectors';
 import actions from '../../../actions';
 import api from '../../../api';
 
+export function* fetchRecentActivities(before) {
+  yield put(actions.fetchRecentActivities(before));
+
+  let items;
+  let users;
+
+  try {
+    ({
+      items,
+      included: { users },
+    } = yield call(request, api.getRecentActivities, {
+      before: before || undefined,
+    }));
+  } catch (error) {
+    yield put(actions.fetchRecentActivities.failure(error));
+    return;
+  }
+
+  yield put(actions.fetchRecentActivities.success(items, users, before));
+}
+
 export function* fetchActivitiesInBoard(boardId) {
   const { lastActivityId } = yield select(selectors.selectBoardById, boardId);
 
@@ -73,6 +94,7 @@ export function* handleActivityCreate(activity) {
 }
 
 export default {
+  fetchRecentActivities,
   fetchActivitiesInBoard,
   fetchActivitiesInCurrentBoard,
   fetchActivitiesInCard,

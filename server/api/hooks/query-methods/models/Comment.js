@@ -3,7 +3,11 @@
  * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
  */
 
+const { makeRowToModelTransformer } = require('../helpers');
+
 const LIMIT = 50;
+
+const transformRowToModel = makeRowToModelTransformer(Comment);
 
 const defaultFind = (criteria, { limit } = {}) =>
   Comment.find(criteria).sort('id DESC').limit(limit);
@@ -47,6 +51,37 @@ const getByCardId = (cardId, { beforeId } = {}) => {
 };
 
 const getOneById = (id) => Comment.findOne(id);
+
+const getRecentByBoardIds = async (boardIds, { before, limit } = {}) => {
+  if (boardIds.length === 0) {
+    return [];
+  }
+
+  const values = [];
+  const inValues = boardIds.map((boardId) => {
+    values.push(boardId);
+    return `$${values.length}`;
+  });
+
+  let query = `
+    SELECT comment.*
+    FROM comment
+    INNER JOIN card ON card.id = comment.card_id
+    WHERE card.board_id IN (${inValues.join(', ')})
+  `;
+
+  if (before) {
+    values.push(before);
+    query += ` AND comment.created_at < $${values.length}`;
+  }
+
+  values.push(limit);
+  query += ` ORDER BY comment.created_at DESC LIMIT $${values.length}`;
+
+  const queryResult = await sails.sendNativeQuery(query, values);
+
+  return queryResult.rows.map(transformRowToModel);
+};
 
 const update = (criteria, values) => Comment.update(criteria).set(values).fetch();
 
@@ -118,6 +153,7 @@ module.exports = {
   getByIds,
   getByCardId,
   getOneById,
+  getRecentByBoardIds,
   update,
   updateOne,
   deleteOne,

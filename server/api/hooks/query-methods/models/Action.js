@@ -39,6 +39,24 @@ const getByCardId = (cardId, { beforeId } = {}) => {
   return Action.find(criteria).sort('id DESC').limit(LIMIT);
 };
 
+const getRecentByBoardIds = (boardIds, { before, limit } = {}) => {
+  if (boardIds.length === 0) {
+    return [];
+  }
+
+  const criteria = {
+    boardId: boardIds,
+  };
+
+  if (before) {
+    criteria.createdAt = {
+      '<': before,
+    };
+  }
+
+  return Action.find(criteria).sort('createdAt DESC').limit(limit);
+};
+
 const update = (criteria, values) => Action.update(criteria).set(values).fetch();
 
 // eslint-disable-next-line no-underscore-dangle
@@ -49,6 +67,7 @@ module.exports = {
   createOne,
   getByBoardId,
   getByCardId,
+  getRecentByBoardIds,
   update,
   delete: delete_,
 };
