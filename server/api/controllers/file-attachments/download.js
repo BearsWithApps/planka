@@ -83,11 +83,26 @@ module.exports = {
       throw Errors.FILE_ATTACHMENT_NOT_FOUND;
     }
 
-    if (attachment.data.mimeType) {
-      headers['Content-Type'] = attachment.data.mimeType;
-    }
-    if (!INLINE_MIME_TYPES_SET.has(attachment.data.mimeType) && !attachment.data.image) {
-      headers['Content-Disposition'] = 'attachment';
+    const { mimeType, filename } = attachment.data;
+    const isHtml = mimeType === 'text/html' || (!mimeType && /\.html?$/i.test(filename));
+
+    if (isHtml) {
+      headers['Content-Type'] = 'text/html; charset=utf-8';
+      headers['Content-Security-Policy'] = 'sandbox allow-scripts allow-popups';
+      headers['X-Content-Type-Options'] = 'nosniff';
+
+      if (this.req.query.download) {
+        headers['Content-Disposition'] = 'attachment';
+      } else {
+        delete headers['Content-Disposition'];
+      }
+    } else {
+      if (mimeType) {
+        headers['Content-Type'] = mimeType;
+      }
+      if (!INLINE_MIME_TYPES_SET.has(mimeType) && !attachment.data.image) {
+        headers['Content-Disposition'] = 'attachment';
+      }
     }
 
     this.res.set({

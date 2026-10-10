@@ -11,12 +11,14 @@ import { useTranslation } from 'react-i18next';
 import { Item as GalleryItem } from 'react-photoswipe-gallery';
 
 import selectors from '../../../selectors';
+import isHtmlAttachment from '../../../utils/is-html-attachment';
 import Config from '../../../constants/Config';
 import Encodings from '../../../constants/Encodings';
 import { AttachmentTypes } from '../../../constants/Enums';
 import ItemContent from './ItemContent';
 import ContentViewer from './ContentViewer';
 import PdfViewer from './PdfViewer';
+import HtmlViewer from './HtmlViewer';
 import CsvViewer from './CsvViewer';
 
 import styles from './Item.module.scss';
@@ -38,7 +40,19 @@ const Item = React.memo(({ id, isVisible }) => {
       galleryItemProps = attachment.data.image;
     } else {
       let content;
-      switch (attachment.data.mimeType) {
+      switch (isHtmlAttachment(attachment.data) ? 'text/html' : attachment.data.mimeType) {
+        case 'text/html':
+          content = (
+            <HtmlViewer
+              src={attachment.data.url}
+              filename={attachment.data.filename}
+              size={attachment.data.size}
+              encoding={attachment.data.encoding}
+              className={classNames(styles.content, styles.contentViewer)}
+            />
+          );
+
+          break;
         case 'application/pdf':
           content = (
             <PdfViewer

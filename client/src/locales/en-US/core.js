@@ -478,6 +478,8 @@ export default {
       userRemovedUserFromThisCard: '<0>{{actorUser}}</0> removed {{removedUser}} from this card',
       username: 'Username',
       users: 'Users',
+      viewRendered: 'View rendered',
+      viewSource: 'View source',
       viewer: 'Viewer',
       viewers: 'Viewers',
       visualTaskManagementWithLists: 'Visual task management with lists.',
