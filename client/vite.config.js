@@ -10,6 +10,8 @@ import svgr from 'vite-plugin-svgr';
 // eslint-disable-next-line import/no-unresolved
 import browserslistToEsbuild from 'browserslist-to-esbuild';
 
+import { buildInfo } from './tools/build-version.mjs';
+
 const PROXY_TARGET = process.env.PROXY_TARGET || 'http://localhost:1337';
 
 // eslint-disable-next-line no-underscore-dangle
@@ -114,9 +116,14 @@ const injectDevBranding = (branding) => ({
 export default defineConfig(({ mode }) => {
   const serverEnv = loadEnv(mode, path.resolve(__dirname, '../server'), '');
   const branding = brandingFromEnv(serverEnv);
+  const build = buildInfo();
 
   return {
     base: './',
+    define: {
+      __BUILD_TIME__: JSON.stringify(build.time),
+      __BUILD_HASH__: JSON.stringify(build.hash),
+    },
     plugins: [
       commonjs(),
       nodePolyfills({

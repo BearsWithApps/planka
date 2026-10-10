@@ -11,6 +11,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # Coolify provides SOURCE_COMMIT; the version label shows its short hash.
+        - SOURCE_COMMIT=${SOURCE_COMMIT:-unknown}
     restart: unless-stopped
     volumes:
       - tasks-planka-data:/app/data
