@@ -27,6 +27,7 @@ import customFields from './custom-fields';
 import customFieldValues from './custom-field-values';
 import comments from './comments';
 import activities from './activities';
+import recentActivities from './recent-activities';
 import notifications from './notifications';
 import notificationServices from './notification-services';
 
@@ -55,6 +56,7 @@ export default {
   ...customFieldValues,
   ...comments,
   ...activities,
+  ...recentActivities,
   ...notifications,
   ...notificationServices,
 };

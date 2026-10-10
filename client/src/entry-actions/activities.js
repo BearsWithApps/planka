@@ -5,6 +5,13 @@
 
 import EntryActionTypes from '../constants/EntryActionTypes';
 
+const fetchRecentActivities = (before) => ({
+  type: EntryActionTypes.RECENT_ACTIVITIES_FETCH,
+  payload: {
+    before,
+  },
+});
+
 const fetchActivitiesInCurrentBoard = () => ({
   type: EntryActionTypes.ACTIVITIES_IN_CURRENT_BOARD_FETCH,
   payload: {},
@@ -23,6 +30,7 @@ const handleActivityCreate = (activity) => ({
 });
 
 export default {
+  fetchRecentActivities,
   fetchActivitiesInCurrentBoard,
   fetchActivitiesInCurrentCard,
   handleActivityCreate,

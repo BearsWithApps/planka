@@ -39,6 +39,26 @@ const getByCardId = (cardId, { beforeId } = {}) => {
   return Action.find(criteria).sort('id DESC').limit(LIMIT);
 };
 
+const getRecentByBoardIds = (boardIds, { before, limit } = {}) => {
+  if (boardIds.length === 0) {
+    return [];
+  }
+
+  const criteria = {
+    boardId: boardIds,
+  };
+
+  // Inclusive on purpose: items sharing the boundary timestamp would otherwise be skipped
+  // between pages. The client drops the repeated boundary item by id.
+  if (before) {
+    criteria.createdAt = {
+      '<=': before,
+    };
+  }
+
+  return Action.find(criteria).sort(['createdAt DESC', 'id DESC']).limit(limit);
+};
+
 const update = (criteria, values) => Action.update(criteria).set(values).fetch();
 
 // eslint-disable-next-line no-underscore-dangle
@@ -49,6 +69,7 @@ module.exports = {
   createOne,
   getByBoardId,
   getByCardId,
+  getRecentByBoardIds,
   update,
   delete: delete_,
 };

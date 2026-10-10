@@ -28,6 +28,12 @@ const getCardActivities = (cardId, data, headers) =>
     items: body.items.map(transformActivity),
   }));
 
+const getRecentActivities = (data, headers) =>
+  socket.get('/actions/recent', data, headers).then((body) => ({
+    ...body,
+    items: body.items.map(transformActivity),
+  }));
+
 /* Event handlers */
 
 const makeHandleActivityCreate = (next) => (body) => {
@@ -40,5 +46,6 @@ const makeHandleActivityCreate = (next) => (body) => {
 export default {
   getBoardActivities,
   getCardActivities,
+  getRecentActivities,
   makeHandleActivityCreate,
 };

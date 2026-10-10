@@ -156,6 +156,7 @@ export default class extends BaseModel {
       case ActionTypes.CARD_TRANSFER__SUCCESS:
       case ActionTypes.COMMENTS_FETCH__SUCCESS:
       case ActionTypes.COMMENT_CREATE_HANDLE:
+      case ActionTypes.RECENT_ACTIVITIES_FETCH__SUCCESS:
       case ActionTypes.ACTIVITIES_IN_BOARD_FETCH__SUCCESS:
       case ActionTypes.ACTIVITIES_IN_CARD_FETCH__SUCCESS:
       case ActionTypes.NOTIFICATION_CREATE_HANDLE:

@@ -5,6 +5,29 @@
 
 import ActionTypes from '../constants/ActionTypes';
 
+const fetchRecentActivities = (before) => ({
+  type: ActionTypes.RECENT_ACTIVITIES_FETCH,
+  payload: {
+    before,
+  },
+});
+
+fetchRecentActivities.success = (items, users, before) => ({
+  type: ActionTypes.RECENT_ACTIVITIES_FETCH__SUCCESS,
+  payload: {
+    items,
+    users,
+    before,
+  },
+});
+
+fetchRecentActivities.failure = (error) => ({
+  type: ActionTypes.RECENT_ACTIVITIES_FETCH__FAILURE,
+  payload: {
+    error,
+  },
+});
+
 const fetchActivitiesInBoard = (boardId) => ({
   type: ActionTypes.ACTIVITIES_IN_BOARD_FETCH,
   payload: {
@@ -61,6 +84,7 @@ const handleActivityCreate = (activity) => ({
 });
 
 export default {
+  fetchRecentActivities,
   fetchActivitiesInBoard,
   fetchActivitiesInCard,
   handleActivityCreate,

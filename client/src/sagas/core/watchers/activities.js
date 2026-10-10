@@ -3,13 +3,16 @@
  * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
  */
 
-import { all, takeEvery } from 'redux-saga/effects';
+import { all, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import services from '../services';
 import EntryActionTypes from '../../../constants/EntryActionTypes';
 
 export default function* activitiesWatchers() {
   yield all([
+    takeLatest(EntryActionTypes.RECENT_ACTIVITIES_FETCH, ({ payload: { before } }) =>
+      services.fetchRecentActivities(before),
+    ),
     takeEvery(EntryActionTypes.ACTIVITIES_IN_CURRENT_BOARD_FETCH, () =>
       services.fetchActivitiesInCurrentBoard(),
     ),

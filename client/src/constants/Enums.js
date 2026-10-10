@@ -109,6 +109,7 @@ export const AttachmentTypes = {
 
 export const ActivityTypes = {
   CREATE_CARD: 'createCard',
+  COMMENT_CARD: 'commentCard',
   MOVE_CARD: 'moveCard',
   ADD_MEMBER_TO_CARD: 'addMemberToCard',
   REMOVE_MEMBER_FROM_CARD: 'removeMemberFromCard',
