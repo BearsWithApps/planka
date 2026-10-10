@@ -48,13 +48,15 @@ const getRecentByBoardIds = (boardIds, { before, limit } = {}) => {
     boardId: boardIds,
   };
 
+  // Inclusive on purpose: items sharing the boundary timestamp would otherwise be skipped
+  // between pages. The client drops the repeated boundary item by id.
   if (before) {
     criteria.createdAt = {
-      '<': before,
+      '<=': before,
     };
   }
 
-  return Action.find(criteria).sort('createdAt DESC').limit(limit);
+  return Action.find(criteria).sort(['createdAt DESC', 'id DESC']).limit(limit);
 };
 
 const update = (criteria, values) => Action.update(criteria).set(values).fetch();

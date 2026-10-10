@@ -186,7 +186,13 @@ module.exports = {
     );
 
     const items = [
-      ...actions.map((action) => presentAction(action, cardById, boardById)),
+      ...actions
+        .filter((action) => {
+          const card = cardById[String(action.cardId)];
+
+          return !card || !card.isTemplate;
+        })
+        .map((action) => presentAction(action, cardById, boardById)),
       ...comments
         .filter((comment) => cardById[String(comment.cardId)])
         .map((comment) => presentComment(comment, cardById, boardById)),

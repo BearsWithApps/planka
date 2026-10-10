@@ -67,16 +67,16 @@ const getRecentByBoardIds = async (boardIds, { before, limit } = {}) => {
     SELECT comment.*
     FROM comment
     INNER JOIN card ON card.id = comment.card_id
-    WHERE card.board_id IN (${inValues.join(', ')})
+    WHERE card.board_id IN (${inValues.join(', ')}) AND card.is_template = false
   `;
 
   if (before) {
     values.push(before);
-    query += ` AND comment.created_at < $${values.length}`;
+    query += ` AND comment.created_at <= $${values.length}`;
   }
 
   values.push(limit);
-  query += ` ORDER BY comment.created_at DESC LIMIT $${values.length}`;
+  query += ` ORDER BY comment.created_at DESC, comment.id DESC LIMIT $${values.length}`;
 
   const queryResult = await sails.sendNativeQuery(query, values);
 
