@@ -15,6 +15,7 @@ import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
 import { usePopupInClosableContext } from '../../../hooks';
 import { isListArchiveOrTrash } from '../../../utils/record-helpers';
+import isHtmlAttachment from '../../../utils/is-html-attachment';
 import { AttachmentTypes, BoardMembershipRoles } from '../../../constants/Enums';
 import EditStep from './EditStep';
 import Favicon from '../../common/Favicon';
@@ -60,7 +61,9 @@ const ItemContent = React.forwardRef(({ id, onOpen }, ref) => {
       event.stopPropagation();
 
       const linkElement = document.createElement('a');
-      linkElement.href = attachment.data.url;
+      linkElement.href = isHtmlAttachment(attachment.data)
+        ? `${attachment.data.url}?download=1`
+        : attachment.data.url;
       linkElement.download = attachment.data.filename;
       linkElement.target = '_blank';
       linkElement.click();

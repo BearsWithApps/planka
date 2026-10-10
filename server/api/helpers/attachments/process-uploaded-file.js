@@ -25,7 +25,10 @@ module.exports = {
 
     const filename = filenamify(inputs.file.filename);
     const fileType = await fileTypeFromFile(inputs.file.fd);
-    const { mime: mimeType = null } = fileType || {};
+    let { mime: mimeType = null } = fileType || {};
+    if (!mimeType && /\.html?$/i.test(filename)) {
+      mimeType = 'text/html';
+    }
     const { size } = inputs.file;
 
     const { id: uploadedFileId } = await UploadedFile.qm.createOne({
